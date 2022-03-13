@@ -1,6 +1,6 @@
 use ::std::fmt;
 
-use ::semver::Version;
+pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
