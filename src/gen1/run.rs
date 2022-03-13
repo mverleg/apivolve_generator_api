@@ -1,8 +1,10 @@
 use ::std::io::{stdout, Write};
-use std::io::{Read, stdin};
+use ::std::io::{Read, stdin};
+use ::std::time::Instant;
 
 use ::log::debug;
 use ::log::error;
+use ::log::trace;
 
 use crate::gen1::GenerateConfig;
 use crate::gen1::GenerateInputFormat;
@@ -22,11 +24,13 @@ pub fn run<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
 }
 
 pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
+    let timer = Instant::now();
     let conf = GenerateConfig::new(Version::new(0, 1, 0), GenerateInputLayout::Steps, GenerateInputFormat::Json);
     let conf_json = serde_json::to_string(&conf).unwrap();
     debug!("config: {}", conf_json);
     {
         let mut writer = stdout().lock();
+        trace!("acquired config write lock");
         writer.write_all(conf_json.as_bytes())
             .map_err(|err| {
                 error!("Failed to write configuration to stdout, err: {}", err);
@@ -41,6 +45,7 @@ pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, Gen
     debug!("reading evolution steps response");
     let steps = {
         let mut reader = stdin().lock();
+        trace!("acquired evolution steps read lock");
         let mut steps_json = String::new();
         let len = reader.read_to_string(&mut steps_json)
             .map_err(|err| {
@@ -58,6 +63,10 @@ pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, Gen
                 GenErr::InputParseErr
             })?
     };
+    trace!("parsed evolution steps, starting provided generator function");
+    debug!("got evolution steps in {} ms", timer.elapsed().as_millis());
+    let timer = Instant::now();
     let res = gen(&steps);
+    debug!("generation took {} ms (from receiving steps)", timer.elapsed().as_millis());
     Ok(res)
 }
