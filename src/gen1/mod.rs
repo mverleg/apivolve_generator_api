@@ -5,7 +5,11 @@ pub use config::GenerateConfig;
 pub use config::GenerateInputFormat;
 pub use config::GenerateInputLayout;
 pub use config::Version;
+pub use run::GenErr;
+pub use run::run;
+pub use run::run_with_steps;
 pub use steps::GenerateSteps;
 
 mod config;
 mod steps;
+mod run;
