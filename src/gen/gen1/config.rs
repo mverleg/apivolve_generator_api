@@ -1,8 +1,8 @@
 use ::std::fmt;
 
 use ::semver::Version;
-
-use crate::gen::gen1::{GenerateInputFormat, GenerateInputLayout};
+use ::serde::Deserialize;
+use ::serde::Serialize;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GenerateConfig {
@@ -20,7 +20,7 @@ impl GenerateConfig {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum GenerateInputLayout {
     /// The complete data layout per version.
-    Layout,
+    // Layout,
     /// The steps to be taken to parse and generate input per version.
     Steps,
 }
@@ -28,7 +28,6 @@ pub enum GenerateInputLayout {
 impl fmt::Display for GenerateInputLayout {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            GenerateInputLayout::Layout => write!(f, "layout"),
             GenerateInputLayout::Steps => write!(f, "steps"),
         }
     }
@@ -44,5 +43,20 @@ impl fmt::Display for GenerateInputFormat {
         match self {
             GenerateInputFormat::Json => write!(f, "json"),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn serialize() {
+        let json = serde_json::to_string(&GenerateConfig {
+            apivolve_version: Version::new(1, 2, 4),
+            data_structure: GenerateInputLayout::Steps,
+            encoding: GenerateInputFormat::Json,
+        }).unwrap();
+        assert_eq!(json, "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"Steps\",\"encoding\":\"Json\"}");
     }
 }
