@@ -4,7 +4,7 @@ use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GenerateConfig {
     apivolve_version: Version,
     data_structure: GenerateInputLayout,
@@ -17,7 +17,7 @@ impl GenerateConfig {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum GenerateInputLayout {
     /// The complete data layout per version.
     // Layout,
@@ -33,7 +33,7 @@ impl fmt::Display for GenerateInputLayout {
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum GenerateInputFormat {
     Json,
 }
@@ -58,5 +58,16 @@ mod tests {
             encoding: GenerateInputFormat::Json,
         }).unwrap();
         assert_eq!(json, "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"Steps\",\"encoding\":\"Json\"}");
+    }
+
+    #[test]
+    fn deserialize() {
+        let config: GenerateConfig = serde_json::from_str("{\"apivolve_version\":\"1.2.4\",\
+                \"data_structure\":\"Steps\",\"encoding\":\"Json\"}").unwrap();
+        assert_eq!(config, GenerateConfig {
+            apivolve_version: Version::new(1, 2, 4),
+            data_structure: GenerateInputLayout::Steps,
+            encoding: GenerateInputFormat::Json,
+        })
     }
 }
