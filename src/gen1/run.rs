@@ -1,11 +1,11 @@
 use ::std::io::{stdout, Write};
 use ::std::io::{Read, stdin};
+use ::std::sync::Arc;
+use ::std::sync::atomic::{AtomicBool, Ordering};
+use ::std::thread;
+use ::std::thread::sleep;
+use ::std::time::Duration;
 use ::std::time::Instant;
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::thread;
-use std::thread::sleep;
-use std::time::Duration;
 
 use ::log::debug;
 use ::log::error;

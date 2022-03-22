@@ -15,6 +15,18 @@ impl GenerateConfig {
     pub fn new(apivolve_version: Version, data_structure: GenerateInputLayout, encoding: GenerateInputFormat) -> Self {
         GenerateConfig { apivolve_version, data_structure, encoding }
     }
+
+    pub fn apivolve_version(&self) -> Version {
+        self.apivolve_version.clone()
+    }
+
+    pub fn data_structure(&self) -> GenerateInputLayout {
+        self.data_structure.clone()
+    }
+
+    pub fn encoding(&self) -> GenerateInputFormat {
+        self.encoding.clone()
+    }
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
