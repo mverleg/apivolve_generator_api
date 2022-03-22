@@ -25,23 +25,16 @@ pub fn run<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
 
 pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
     let timer = Instant::now();
-    let conf = GenerateConfig::new(Version::new(0, 1, 0), GenerateInputLayout::Steps, GenerateInputFormat::Json);
-    let conf_json = serde_json::to_string(&conf).unwrap();
-    debug!("config: {}", conf_json);
-    {
-        let mut writer = stdout().lock();
-        trace!("acquired config write lock");
-        writer.write_all(conf_json.as_bytes())
-            .map_err(|err| {
-                error!("Failed to write configuration to stdout, err: {}", err);
-                GenErr::ConfigWriteErr
-            })?;
-        writer.write_all(b"\n")
-            .map_err(|err| {
-                error!("Failed to end configuration on stdout, err: {}", err);
-                GenErr::ConfigWriteErr
-            })?;
-    }
+    send_config();
+    let steps = recv_steps()?;
+    debug!("got evolution steps in {} ms", timer.elapsed().as_millis());
+    let timer = Instant::now();
+    let res = gen(&steps);
+    debug!("generation took {} ms (from receiving steps)", timer.elapsed().as_millis());
+    Ok(res)
+}
+
+fn recv_steps() -> Result<GenerateSteps, GenErr> {
     debug!("reading evolution steps response");
     let steps = {
         let mut reader = stdin().lock();
@@ -64,9 +57,24 @@ pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, Gen
             })?
     };
     trace!("parsed evolution steps, starting provided generator function");
-    debug!("got evolution steps in {} ms", timer.elapsed().as_millis());
-    let timer = Instant::now();
-    let res = gen(&steps);
-    debug!("generation took {} ms (from receiving steps)", timer.elapsed().as_millis());
-    Ok(res)
+    Ok(steps)
+}
+
+fn send_config() -> Result<(), GenErr> {
+    let conf = GenerateConfig::new(Version::new(0, 1, 0), GenerateInputLayout::Steps, GenerateInputFormat::Json);
+    let conf_json = serde_json::to_string(&conf).unwrap();
+    debug!("config: {}", conf_json);
+    let mut writer = stdout().lock();
+    trace!("acquired config write lock");
+    writer.write_all(conf_json.as_bytes())
+        .map_err(|err| {
+            error!("Failed to write configuration to stdout, err: {}", err);
+            GenErr::ConfigWriteErr
+        })?;
+    writer.write_all(b"\n")
+        .map_err(|err| {
+            error!("Failed to end configuration on stdout, err: {}", err);
+            GenErr::ConfigWriteErr
+        })?;
+    Ok(())
 }
