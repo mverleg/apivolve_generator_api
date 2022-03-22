@@ -6,6 +6,9 @@ edition = "2021"
 publish = true
 license = "Apache-2.0"
 
+[features]
+binary = ["env_logger"]
+
 [lib]
 name = "apivolve_generator_api"
 path = "src/lib.rs"
@@ -13,10 +16,12 @@ path = "src/lib.rs"
 [[bin]]
 name = "apivolve-gen1-json"
 path = "src/main_json.rs"
+required-features = ["binary"]
 
 [[bin]]
 name = "apivolve-gen1-debug-dump"
 path = "src/main_debug_dump.rs"
+required-features = ["binary"]
 
 [dependencies]
 serde = { version = "1.0.136", features = ["derive"] }
@@ -24,3 +29,7 @@ serde_json = "1.0.79"
 semver = { version = "1.0.6", features = ["serde"] }
 log = { version = "0.4.14", features = ["release_max_level_info"] }
 #TODO @mark: found a cool feature but is this worth it? ^
+
+# bin dependencies
+env_logger = { version = "0.9.0", optional = true }
+

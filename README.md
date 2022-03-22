@@ -1,7 +1,7 @@
 
 # Apivolve generator API
 
-This project is part of Apivolve, more details about that in https://github.com/mverleg/apivolve .
+This project is part of [Apivolve](https://github.com/mverleg/apivolve).
 
 If you want to create your own code generator for Apivolve, you do not need to extend Apivolve, just this small library is enough.
 

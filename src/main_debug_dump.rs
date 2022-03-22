@@ -2,6 +2,7 @@ use ::apivolve_generator_api::gen1::GenerateSteps;
 use ::apivolve_generator_api::gen1::run_with_steps;
 
 fn main() {
+    env_logger::init();
     run_with_steps(debug_dump).unwrap();
 }
 
