@@ -1,6 +1,11 @@
 use ::std::io::{stdout, Write};
 use ::std::io::{Read, stdin};
 use ::std::time::Instant;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::thread;
+use std::thread::sleep;
+use std::time::Duration;
 
 use ::log::debug;
 use ::log::error;
@@ -25,13 +30,45 @@ pub fn run<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
 
 pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
     let timer = Instant::now();
-    send_config();
+    let monitor = start_slowness_monitor();
+    send_config()?;
     let steps = recv_steps()?;
+    monitor.ready();
     debug!("got evolution steps in {} ms", timer.elapsed().as_millis());
     let timer = Instant::now();
     let res = gen(&steps);
     debug!("generation took {} ms (from receiving steps)", timer.elapsed().as_millis());
     Ok(res)
+}
+
+#[derive(Debug)]
+struct ReadyNotifier {
+    is_ready: AtomicBool,
+}
+
+impl ReadyNotifier {
+    fn new() -> Self {
+        ReadyNotifier {
+            is_ready: AtomicBool::new(false),
+        }
+    }
+
+    fn ready(&self) {
+        self.is_ready.store(true, Ordering::Release);
+    }
+}
+
+#[must_use]
+fn start_slowness_monitor() -> Arc<ReadyNotifier> {
+    let notifier = Arc::new(ReadyNotifier::new());
+    let notifier_for_thread = notifier.clone();
+    thread::spawn(move || {
+        sleep(Duration::from_secs(5));
+        if !notifier_for_thread.is_ready.load(Ordering::Acquire) {
+            eprintln!("still waiting for apivolve to supply the evolution data...");
+        }
+    });
+    notifier
 }
 
 fn recv_steps() -> Result<GenerateSteps, GenErr> {
