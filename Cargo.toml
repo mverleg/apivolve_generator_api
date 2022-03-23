@@ -5,6 +5,7 @@ description = "Api for creating generators for Apivolve, an API evolution tool t
 edition = "2021"
 publish = true
 license = "Apache-2.0"
+repository = "https://github.com/mverleg/apivolve_generator_api"
 
 [features]
 binary = ["env_logger"]
