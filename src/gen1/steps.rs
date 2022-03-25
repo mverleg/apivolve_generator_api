@@ -4,8 +4,8 @@ use ::serde::Serialize;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GenerateSteps {
-    versions: Vec<(Version, Vec<Step>)>,
-    pending: Vec<Step>,
+    pub versions: Vec<(Version, Vec<Step>)>,
+    pub pending: Vec<Step>,
 }
 
 impl GenerateSteps {

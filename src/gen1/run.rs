@@ -87,6 +87,7 @@ fn recv_steps() -> Result<GenerateSteps, GenErr> {
             return Err(GenErr::InputReadErr);
         }
         debug!("read {} byte string steps", steps_json.len());
+        trace!("json steps: {}", &steps_json);
         serde_json::from_str::<GenerateSteps>(&steps_json)
             .map_err(|err| {
                 error!("Failed to parse steps input from stdin, err: {}", err);
@@ -98,7 +99,11 @@ fn recv_steps() -> Result<GenerateSteps, GenErr> {
 }
 
 fn send_config() -> Result<(), GenErr> {
-    let conf = GenerateConfig::new(Version::new(0, 1, 0), GenerateInputLayout::Steps, GenerateInputFormat::Json);
+    let conf = GenerateConfig {
+        apivolve_version: Version::new(0, 1, 0),
+        data_structure: GenerateInputLayout::Steps,
+        encoding: GenerateInputFormat::Json
+    };
     let conf_json = serde_json::to_string(&conf).unwrap();
     debug!("config: {}", conf_json);
     let mut writer = stdout().lock();
