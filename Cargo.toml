@@ -15,11 +15,6 @@ name = "apivolve_generator_api"
 path = "src/lib.rs"
 
 [[bin]]
-name = "apivolve-gen1-json"
-path = "src/main_json.rs"
-required-features = ["binary"]
-
-[[bin]]
 name = "apivolve-gen1-debug-dump"
 path = "src/main_debug_dump.rs"
 required-features = ["binary"]

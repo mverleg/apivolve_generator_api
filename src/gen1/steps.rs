@@ -1,7 +1,6 @@
-
+use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use semver::Version;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GenerateSteps {
