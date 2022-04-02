@@ -1,5 +1,5 @@
-use ::apivolve_generator_api::gen1::GenerateSteps;
 use ::apivolve_generator_api::gen1::run_with_steps;
+use ::apivolve_generator_api::gen1::GenerateSteps;
 
 fn main() {
     env_logger::init();

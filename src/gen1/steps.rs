@@ -10,7 +10,10 @@ pub struct GenerateSteps {
 
 impl GenerateSteps {
     pub fn new() -> Self {
-        GenerateSteps { versions: vec![], pending: vec![] }
+        GenerateSteps {
+            versions: vec![],
+            pending: vec![],
+        }
     }
 }
 
