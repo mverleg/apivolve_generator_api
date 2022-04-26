@@ -44,24 +44,26 @@ pub fn run_if_not_ready_after(timeout: Duration, timeout_action: impl FnOnce() +
 fn with_timeout() {
     let is_invoked = Arc::new(AtomicBool::new(false));
     let is_invoked_clone = is_invoked.clone();
-    run_if_not_ready_after(Duration::from_millis(1), move || {
+    let guard = run_if_not_ready_after(Duration::from_millis(1), move || {
         is_invoked_clone.store(true, Ordering::Release);
     });
-    for i in 0 .. 200 {
+    for _ in 0 .. 200 {
         sleep(Duration::from_millis(1));
         if is_invoked.load(Ordering::Acquire) {
             return
         }
     }
+    drop(guard);  // explicit drop actually extends the lifetime to here
     panic!("should have invoked the action and early-exited")
 }
 
 #[test]
 fn no_timeout() {
     {
-        run_if_not_ready_after(Duration::from_millis(1), || {
+        let guard = run_if_not_ready_after(Duration::from_millis(1), || {
             panic!("should not have run");
         });
+        drop(guard);  // explicit drop actually extends the lifetime to here
     }
     sleep(Duration::from_millis(2));
 }
