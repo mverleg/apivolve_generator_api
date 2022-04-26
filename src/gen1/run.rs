@@ -26,15 +26,18 @@ pub fn run<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
 }
 
 pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
-    let timer = Instant::now();
-    let monitor = run_if_not_ready_after(Duration::from_secs(5),
-        || eprintln!("Generator is not ready after 1 second, aborting") );
+    let mut timer = Instant::now();
+    let monitor = run_if_not_ready_after(Duration::from_secs(5), || {
+        eprintln!("Still waiting for generator after 5 second")
+    });
     send_config()?;
     let steps = recv_steps()?;
     monitor.ready();
     debug!("got evolution steps in {} ms", timer.elapsed().as_millis());
-    let timer = Instant::now();
+    timer = Instant::now();
+    eprintln!("pre-gen!"); //TODO @mark: TEMPORARY! REMOVE THIS!
     let res = gen(&steps);
+    eprintln!("post-gen!"); //TODO @mark: TEMPORARY! REMOVE THIS!
     debug!(
         "generation took {} ms (from receiving steps)",
         timer.elapsed().as_millis()
