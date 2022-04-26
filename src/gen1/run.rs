@@ -44,36 +44,6 @@ pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, Gen
     Ok(res)
 }
 
-#[derive(Debug)]
-struct ReadyNotifier {
-    is_ready: AtomicBool,
-}
-
-impl ReadyNotifier {
-    fn new() -> Self {
-        ReadyNotifier {
-            is_ready: AtomicBool::new(false),
-        }
-    }
-
-    fn ready(&self) {
-        self.is_ready.store(true, Ordering::Release);
-    }
-}
-
-#[must_use]
-fn start_slowness_monitor() -> Arc<ReadyNotifier> {
-    let notifier = Arc::new(ReadyNotifier::new());
-    let notifier_for_thread = notifier.clone();
-    thread::spawn(move || {
-        sleep(Duration::from_secs(5));
-        if !notifier_for_thread.is_ready.load(Ordering::Acquire) {
-            eprintln!("still waiting for apivolve to supply the evolution data...");
-        }
-    });
-    notifier
-}
-
 fn recv_steps() -> Result<GenerateSteps, GenErr> {
     debug!("reading evolution steps response");
     let steps = {
