@@ -1,9 +1,5 @@
 use ::std::io::{stdin, Read};
 use ::std::io::{stdout, Write};
-use ::std::sync::atomic::{AtomicBool, Ordering};
-use ::std::sync::Arc;
-use ::std::thread;
-use ::std::thread::sleep;
 use ::std::time::Duration;
 use ::std::time::Instant;
 
@@ -16,6 +12,7 @@ use crate::gen1::GenerateInputFormat;
 use crate::gen1::GenerateInputLayout;
 use crate::gen1::GenerateSteps;
 use crate::gen1::Version;
+use crate::util::monitor::run_if_not_ready_after;
 
 #[derive(Debug)]
 pub enum GenErr {
@@ -30,7 +27,8 @@ pub fn run<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
 
 pub fn run_with_steps<T>(gen: impl FnOnce(&GenerateSteps) -> T) -> Result<T, GenErr> {
     let timer = Instant::now();
-    let monitor = start_slowness_monitor();
+    let monitor = run_if_not_ready_after(Duration::from_secs(5),
+        || eprintln!("Generator is not ready after 1 second, aborting") );
     send_config()?;
     let steps = recv_steps()?;
     monitor.ready();
