@@ -2,6 +2,7 @@ use ::std::io::{stdin, Read};
 use ::std::io::{stdout, Write};
 use ::std::time::Duration;
 use ::std::time::Instant;
+use std::fmt::Debug;
 
 use ::log::debug;
 use ::log::error;
@@ -11,8 +12,25 @@ use crate::gen1::GenerateConfig;
 use crate::gen1::GenerateInputFormat;
 use crate::gen1::GenerateInputLayout;
 use crate::gen1::GenerateSteps;
+use crate::gen1::steps::Step;
 use crate::gen1::Version;
 use crate::util::monitor::run_if_not_ready_after;
+
+pub trait ConfigSender: Debug {
+    fn send<R: StepReceiver>(self, config: GenerateConfig) -> Result<R, String>;
+}
+
+#[derive(Debug)]
+pub enum StepEntry {
+    Version(Version, Vec<Step>),
+    Pending(Vec<Step>),
+    Done,
+}
+
+pub trait StepReceiver: Debug {
+    fn recv(&self) -> Result<StepEntry, String>;
+}
+
 
 #[derive(Debug)]
 pub enum GenErr {
@@ -51,6 +69,9 @@ fn recv_steps() -> Result<GenerateSteps, GenErr> {
         let mut reader = stdin().lock();
         trace!("acquired evolution steps read lock");
         let mut steps_json = String::new();
+        let guard = run_if_not_ready_after(Duration::from_secs(15), || {
+            eprintln!("Reading evolution steps is taking more than 15 seconds")
+        });
         let len = reader.read_to_string(&mut steps_json).map_err(|err| {
             error!("Failed to read steps input from stdin, err: {}", err);
             GenErr::InputReadErr
@@ -59,6 +80,7 @@ fn recv_steps() -> Result<GenerateSteps, GenErr> {
             error!("Steps input from stdin was empty; either no input was sent, or read failed");
             return Err(GenErr::InputReadErr);
         }
+        guard.ready();
         debug!("read {} byte string steps", steps_json.len());
         trace!("json steps: {}", &steps_json);
         serde_json::from_str::<GenerateSteps>(&steps_json).map_err(|err| {
