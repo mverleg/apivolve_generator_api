@@ -1,11 +1,11 @@
 
 # Apivolve generator API
 
-This project is part of [Apivolve](https://github.com/mverleg/apivolve).
+This project is part of [Apivolve](https://github.com/mverleg/apivolve), a project to describe api changes in evolution files.
 
-If you want to create your own code generator for Apivolve in Rust, you do not need to extend Apivolve, just this small library is enough.
+The api description is automatically converted to code for parsing, including full backwards compatibility. This is done by generators for each language, which can be written fully independently from the main Apivolve repo.
 
-Note that you do not need to use Rust, you can write a generator in any other language. In that case, you parse the json yourself (or with another library).
+This project is for if you want to use Rust to create your own Apivolve generator. You can use any other language you want; in that case, you parse the json yourself and do not need this library ([example](./examples/apivolve-gen1-python-example)).
 
 This repository contains:
 

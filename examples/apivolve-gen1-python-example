@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+# This is a simple example of creating an Apivolve generator in Python. It follows the protocol in the readme.
+# The `apivolve-gen1-` prefix in the name is important, and this file must be in a directory in `$PATH`.
+
+#TODO @mark: implement
+
