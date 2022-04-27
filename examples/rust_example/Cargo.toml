@@ -1,0 +1,16 @@
+[package]
+name = "apivolve-gen1-debug-dump"
+version = "0.1.0"
+description = "Example of a simple Apivolve generator in Rust."
+edition = "2021"
+publish = false
+repository = "https://github.com/mverleg/apivolve_generator_api"
+
+[[bin]]
+name = "apivolve-gen1-debug-dump"
+path = "src/debug_dump.rs"
+
+[dependencies]
+apivolve_generator_api = { path = "../../" }
+env_logger = { version = "0.9.0" }
+
