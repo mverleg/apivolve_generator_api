@@ -16,7 +16,7 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "apivolve-gen1-debug-dump"
-path = "src/main_debug_dump.rs"
+path = "src/debug_dump.rs"
 required-features = ["binary"]
 
 [dependencies]
