@@ -1,22 +1,22 @@
-use crate::gen1::connect::format::GenerateInputFormat;
-use crate::gen1::connect::layout::GenerateInputLayout;
+use ::std::path::PathBuf;
+
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-pub struct AcceptsConfig {
+pub struct GenerationPreferences {
     pub apivolve_version: Version,
-    pub data_structure: GenerateInputLayout,
-    pub encoding: GenerateInputFormat,
+    pub output_dir: PathBuf,
+    pub extra_args: Vec<String>,
 }
 
 #[test]
 fn serialize() {
-    let json = serde_json::to_string(&AcceptsConfig {
+    let json = serde_json::to_string(&GenerationPreferences {
         apivolve_version: Version::new(1, 2, 4),
-        data_structure: GenerateInputLayout::Steps,
-        encoding: GenerateInputFormat::Json,
+        output_dir: PathBuf::from("/tmp"),
+        extra_args: vec!["--strict".to_string()],
     })
     .unwrap();
     assert_eq!(
@@ -27,17 +27,17 @@ fn serialize() {
 
 #[test]
 fn deserialize() {
-    let config: AcceptsConfig = serde_json::from_str(
+    let config: GenerationPreferences = serde_json::from_str(
         "{\"apivolve_version\":\"1.2.4\",\
             \"data_structure\":\"Steps\",\"encoding\":\"Json\"}",
     )
     .unwrap();
     assert_eq!(
         config,
-        AcceptsConfig {
+        GenerationPreferences {
             apivolve_version: Version::new(1, 2, 4),
-            data_structure: GenerateInputLayout::Steps,
-            encoding: GenerateInputFormat::Json,
+            output_dir: PathBuf::from("/tmp"),
+            extra_args: vec!["--strict".to_string()],
         }
     )
 }

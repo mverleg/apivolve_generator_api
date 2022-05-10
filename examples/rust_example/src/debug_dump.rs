@@ -11,3 +11,9 @@ fn main() {
     };
     gen1::run_generator(config);
 }
+
+#[derive(Debug)]
+//TODO @mark: unused?
+struct DebugDumpGenerator();
+
+impl gen1::Generator for DebugDumpGenerator {}
