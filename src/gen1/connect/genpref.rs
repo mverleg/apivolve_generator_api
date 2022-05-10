@@ -22,15 +22,14 @@ fn serialize() {
     .unwrap();
     assert_eq!(
         json,
-        "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"Steps\",\"encoding\":\"Json\"}"
+        "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}"
     );
 }
 
 #[test]
 fn deserialize() {
     let config: GenerationPreferences = serde_json::from_str(
-        "{\"apivolve_version\":\"1.2.4\",\
-            \"data_structure\":\"Steps\",\"encoding\":\"Json\"}",
+        "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}",
     )
     .unwrap();
     assert_eq!(
