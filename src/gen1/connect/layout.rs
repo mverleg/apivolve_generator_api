@@ -5,7 +5,7 @@ use ::serde::Deserialize;
 use ::serde::Serialize;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "snake_case", deny_unknown_fields)]
 pub enum GenerateInputLayout {
     /// The complete data layout per version.
     // Layout,

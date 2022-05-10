@@ -5,6 +5,7 @@ use ::serde::Deserialize;
 use ::serde::Serialize;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AcceptsConfig {
     pub apivolve_version: Version,
     pub data_structure: GenerateInputLayout,
