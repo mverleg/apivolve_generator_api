@@ -1,5 +1,6 @@
-use ::std::env::args;
 use ::apivolve_generator_api::gen1 as gen;
+use ::async_trait::async_trait;
+use ::std::env::args;
 
 fn main() {
     env_logger::init();
@@ -25,4 +26,5 @@ impl DebugDumpGenerator {
     }
 }
 
+#[async_trait]
 impl gen::Generator for DebugDumpGenerator {}
