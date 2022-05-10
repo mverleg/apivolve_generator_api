@@ -15,6 +15,8 @@ This repository contains:
 
 ## Protocol v1
 
+Communication happens over a localhost TCP connection.
+
 * Apivolve runs the generator executable (without arguments).
 * The generator sends the configuration it expects to use ([`AcceptsConfig`](./src/gen1/connect/accepts.rs)).
 * Apivolve sends the generator options, such as output directory.

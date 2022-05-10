@@ -1,8 +1,8 @@
+use crate::gen1::connect::format::GenerateInputFormat;
+use crate::gen1::connect::layout::GenerateInputLayout;
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::connect::format::GenerateInputFormat;
-use crate::gen1::connect::layout::GenerateInputLayout;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AcceptsConfig {
@@ -17,7 +17,8 @@ fn serialize() {
         apivolve_version: Version::new(1, 2, 4),
         data_structure: GenerateInputLayout::Steps,
         encoding: GenerateInputFormat::Json,
-    }).unwrap();
+    })
+    .unwrap();
     assert_eq!(
         json,
         "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"Steps\",\"encoding\":\"Json\"}"
@@ -29,7 +30,8 @@ fn deserialize() {
     let config: GenerateConfig = serde_json::from_str(
         "{\"apivolve_version\":\"1.2.4\",\
             \"data_structure\":\"Steps\",\"encoding\":\"Json\"}",
-    ).unwrap();
+    )
+    .unwrap();
     assert_eq!(
         config,
         GenerateConfig {
