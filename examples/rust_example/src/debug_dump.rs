@@ -1,19 +1,28 @@
 use ::std::env::args;
-use ::apivolve_generator_api::gen1;
+use ::apivolve_generator_api::gen1 as gen;
 
 fn main() {
     env_logger::init();
     assert!(args().skip(1).next().is_none(), "no arguments expected");
-    let config = gen1::AcceptsConfig {
-        apivolve_version: gen1::Version::new(0, 1, 0),
-        data_structure: gen1::GenerateInputLayout::Steps,
-        encoding: gen1::GenerateInputFormat::Json,
+    let config = gen::AcceptsConfig {
+        apivolve_version: gen::Version::new(0, 1, 0),
+        data_structure: gen::GenerateInputLayout::Steps,
+        encoding: gen::GenerateInputFormat::Json,
     };
-    gen1::run_generator(config);
+    gen::run_generator(config, |prefs| DebugDumpGenerator::new(prefs));
 }
 
 #[derive(Debug)]
-//TODO @mark: unused?
-struct DebugDumpGenerator();
+struct DebugDumpGenerator {
+    config: gen::GenerationPreferences,
+}
 
-impl gen1::Generator for DebugDumpGenerator {}
+impl DebugDumpGenerator {
+    pub fn new(config: gen::GenerationPreferences) -> Self {
+        DebugDumpGenerator {
+            config
+        }
+    }
+}
+
+impl gen::Generator for DebugDumpGenerator {}

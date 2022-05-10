@@ -1,7 +1,9 @@
+pub use ::semver::Version;
+
 pub use self::connect::accepts::AcceptsConfig;
 pub use self::connect::format::GenerateInputFormat;
+pub use self::connect::genpref::GenerationPreferences;
 pub use self::connect::layout::GenerateInputLayout;
-pub use ::semver::Version;
 
 mod connect;
 
@@ -10,8 +12,14 @@ pub trait Generator {
 }
 
 /// Run the generator, handling the communication with Apivolve.
-pub fn run_generator(accepts_config: AcceptsConfig) {
+pub fn run_generator<G: Generator>(
+        accepts_config: AcceptsConfig,
+        make_generator: impl FnOnce(GenerationPreferences) -> G) {
     //TODO @mark: auth
+    //TODO @mark: send `accepts_config`
+    let generator_preferences: GenerationPreferences = unimplemented!();
+    let generator: G = make_generator(generator_preferences);
+
 
     // eprintln!("start debug_dump code"); //TODO @mark: TEMPORARY! REMOVE THIS!
     // let step_json = serde_json::to_string_pretty(&steps)
