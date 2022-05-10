@@ -13,10 +13,13 @@ pub type ErrMsg = String;
 pub type GenResult = Result<(), ErrMsg>;
 
 pub trait Generator {
+    /// Will be called for each version, in ascending order, before other methods are called.
     async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult;
 
+    /// Will be called once after all the versions only if there are any pending changes.
     async fn generate_pending(&mut self, evolution: Evolution) -> GenResult;
 
+    /// Will be called exactly once at the end, if no prior steps have failed.
     async fn finalize(&mut self) -> GenResult;
 }
 
@@ -28,17 +31,20 @@ pub fn run_generator<G: Generator>(
     //TODO @mark: send `accepts_config`
     let generator_preferences: GenerationPreferences = read_gen_preferences();
     let generator: G = make_generator(generator_preferences);
-    if let Err(err) = generate_until_first_err(generator).await {
+    //TODO @mark: use a better async runtime
+    if let Err(err) = block_on(generate_until_first_err(generator)) {
         panic!("{}", err);  //TODO @mark:
     }
 }
 
-fn generate_until_first_err(generator: G) -> GenResult {
-    while let Some(evolution) = unimplemented!() {
-        let res = generator.generate_version(evolution).await?;
+async fn generate_until_first_err(generator: G) -> GenResult {
+    while let Some(evolution) = () {
+        generator.generate_version(evolution).await?;
+    };
+    if let Some(evolution) = () {
+        generator.generate_pending(evolution).await?;
     }
-    let res = generator.generate_pending(evolution).await;
-    let res = generator.finalize(evolution).await;
+    generator.finalize().await?;
     Ok(())
 }
 
