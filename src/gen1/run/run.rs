@@ -1,23 +1,8 @@
-use ::async_trait::async_trait;
 use ::futures::executor::block_on;
 use ::semver::Version;
 
-use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences};
-
-pub type ErrMsg = String;
-pub type GenResult = Result<(), ErrMsg>;
-
-#[async_trait]
-pub trait Generator {
-    /// Will be called once at the start, only if there are any pending changes.
-    async fn generate_pending(&mut self, evolution: Evolution) -> GenResult;
-
-    /// Will be called for each version, from newest to oldest, after `generate_pending`.
-    async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult;
-
-    /// Will be called exactly once at the end if all prior steps were successful.
-    async fn finalize(self) -> GenResult;
-}
+use crate::gen1::{AcceptsConfig, GenerationPreferences};
+use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(

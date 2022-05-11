@@ -14,6 +14,5 @@ mod connect;
 mod evolution;
 mod run;
 
-#[cfg(test)]
 mod test_util;
-
+pub use test_util::testsuite_full;

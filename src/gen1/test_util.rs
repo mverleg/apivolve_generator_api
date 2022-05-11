@@ -6,7 +6,7 @@
 
 use std::path::PathBuf;
 
-fn accept_all(output_dir: &PathBuf) -> Result<(), String> {
+fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
@@ -23,6 +23,8 @@ macro_rules! testsuite_full {
         testsuite_full!($generator_func, accept_all);
     };
 }
+
+pub use testsuite_full;
 
 pub fn no_versions() {
 
