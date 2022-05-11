@@ -1,5 +1,6 @@
+use ::async_trait::async_trait;
+use ::futures::executor::block_on;
 use ::semver::Version;
-use futures::executor::block_on;
 
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences};
 
@@ -8,13 +9,13 @@ pub type GenResult = Result<(), ErrMsg>;
 
 #[async_trait]
 pub trait Generator {
-    /// Will be called for each version, in ascending order, before other methods are called.
-    async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult;
-
-    /// Will be called once after all the versions only if there are any pending changes.
+    /// Will be called once at the start, only if there are any pending changes.
     async fn generate_pending(&mut self, evolution: Evolution) -> GenResult;
 
-    /// Will be called exactly once at the end, if no prior steps have failed.
+    /// Will be called for each version, from newest to oldest, after `generate_pending`.
+    async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult;
+
+    /// Will be called exactly once at the end if all prior steps were successful.
     async fn finalize(self) -> GenResult;
 }
 

@@ -28,3 +28,8 @@ impl DebugDumpGenerator {
 
 #[async_trait]
 impl gen::Generator for DebugDumpGenerator {}
+
+#[test]
+fn generator_smoke_test() {
+    unimplemented!();  //TODO @mark
+}
