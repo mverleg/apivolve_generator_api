@@ -34,12 +34,12 @@ pub fn run_generator<G: Generator>(
 }
 
 async fn generate_until_first_err(mut generator: impl Generator) -> GenResult {
-    while let Some((version, evolution)) = () {
-        generator.generate_version(version, evolution).await?;
-    };
-    if let Some(evolution) = () {
+    if let Some(evolution) = None {
         generator.generate_pending(evolution).await?;
     }
+    while let Some((version, evolution)) = None {
+        generator.generate_version(version, evolution).await?;
+    };
     generator.finalize().await?;
     Ok(())
 }
