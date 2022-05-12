@@ -9,8 +9,6 @@ use ::std::path::PathBuf;
 use ::async_trait::async_trait;
 use ::semver::Version;
 
-use ::paste::paste;
-
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator, GenResult};
 
 fn noop_generator() {}
@@ -21,9 +19,9 @@ fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
 
 macro_rules! testsuite_basic {
     ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
-        make_gen_test!(generate_no_versions, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
-        make_gen_test!(generate_core_features, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
-        make_gen_test!(generate_with_pending, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
+        make_gen_test!(test_no_versions, generate_no_versions, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
+        make_gen_test!(test_core_features, generate_core_features, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
+        make_gen_test!(test_with_pending, generate_with_pending, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
         //TODO @mark: more tests
     };
     ($accepts_config_expr: expr, $make_generator_expr: expr) => {
@@ -44,42 +42,38 @@ macro_rules! testsuite_full {
 pub use testsuite_basic;
 pub use testsuite_full;
 
-type GenFn<G: Generator> = impl FnOnce(GenerationPreferences) -> G;
-
 macro_rules! make_gen_test {
-    ($test_ident: ident, $accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
-        paste::item! {
-            #[test]
-            fn [< test_ $test_ident >](test_func: impl FnOnce(PathBuf)) {
-                let accepts_config: AcceptsConfig = $accepts_config_expr;
-                let make_generator: GenFn = $make_generator_expr;
-                let verify_func: impl FnOnce(PathBuf) = $verify_func_ident;
-                match $test_ident(accepts_config, make_generator) {
-                    Ok(path) => $verify_func_ident(path),
-                    Err(err) => panic!("apivolve generator failed: {}", err),
-                }
+    ($test_name: ident, $gen_test_ident: ident, $accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
+        #[test]
+        fn $test_name() {
+            let accepts_config: AcceptsConfig = $accepts_config_expr;
+            let make_generator: FnOnce(GenerationPreferences) -> G = $make_generator_expr;
+            let verify_func: FnOnce(PathBuf) = $verify_func_ident;
+            match $gen_test_ident(accepts_config, make_generator) {
+                Ok(path) => $verify_func_ident(path),
+                Err(err) => panic!("apivolve generator failed: {}", err),
             }
         }
     }
 }
 
-pub fn generate_no_versions<G: Generator>(
+pub fn generate_no_versions<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
     accepts_config: AcceptsConfig,
-    make_generator: GenFn<G>,
+    make_generator: GenFn,
 ) -> Result<PathBuf, String> {
     unimplemented!()
 }
 
-pub fn generate_core_features<G: Generator>(
+pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
     accepts_config: AcceptsConfig,
-    make_generator: GenFn<G>,
+    make_generator: GenFn,
 ) -> Result<PathBuf, String> {
     unimplemented!()
 }
 
-pub fn generate_with_pending<G: Generator>(
+pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
     accepts_config: AcceptsConfig,
-    make_generator: GenFn<G>,
+    make_generator: GenFn,
 ) -> Result<PathBuf, String> {
     unimplemented!()
 }
