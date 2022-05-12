@@ -12,14 +12,25 @@ fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
-macro_rules! testsuite_full {
+macro_rules! testsuite_basic {
     ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_iden: iden) => {
         make_gen_test!(generate_no_versions, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
         make_gen_test!(generate_core_features, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
         make_gen_test!(generate_with_pending, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
+        //TODO @mark: more tests
     };
     ($accepts_config_expr: expr, $make_generator_expr: expr) => {
         testsuite_full!($accepts_config_expr: expr, $make_generator_expr: expr, accept_all);
+    };
+}
+
+macro_rules! testsuite_full {
+    ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_iden: iden) => {
+        testsuite_basic!($accepts_config_expr, $make_generator_expr, $verify_func_iden);
+        //TODO @mark: more tests
+    };
+    ($accepts_config_expr: expr, $make_generator_expr: expr) => {
+        testsuite_basic!($accepts_config_expr: expr, $make_generator_expr: expr, accept_all);
     };
 }
 
