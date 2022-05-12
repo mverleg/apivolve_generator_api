@@ -41,36 +41,33 @@ macro_rules! make_gen_test {
 }
 
 #[test]
-fn test_generate_no_versions() {
-    if let Err(err) = generate_no_versions(accepts_config, make_generator) {
-        panic!("apivolve generator failed: {}", err);
+fn test_generate_no_versions(test_func: impl FnOnce(PathBuf)) {
+    match generate_no_versions(accepts_config, make_generator) {
+        Ok(path) => test_func(path),
+        Err(err) => panic!("apivolve generator failed: {}", err),
     }
 }
 
 type GenFn<G: Generator> = impl FnOnce(GenerationPreferences) -> G;
-type TestFn = impl FnOnce(PathBuf);
 
 pub fn generate_no_versions<G: Generator>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn<G>,
-    test_func: TestFn,
-) -> Result<(), String> {
+) -> Result<PathBuf, String> {
     unimplemented!()
 }
 
 pub fn generate_core_features<G: Generator>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn<G>,
-    test_func: TestFn,
-) -> Result<(), String> {
+) -> Result<PathBuf, String> {
     unimplemented!()
 }
 
 pub fn generate_with_pending<G: Generator>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn<G>,
-    test_func: TestFn,
-) -> Result<(), String> {
+) -> Result<PathBuf, String> {
     unimplemented!()
 }
 

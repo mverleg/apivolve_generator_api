@@ -3,7 +3,7 @@ pub use ::semver::Version;
 pub use self::connect::accepts::AcceptsConfig;
 pub use self::connect::format::GenerateInputFormat;
 pub use self::connect::genpref::GenerationPreferences;
-pub use self::connect::layout::GenerateInputLayout;
+pub use self::connect::layout::GenerateInputFeature;
 pub use self::evolution::Evolution;
 pub use self::run::ErrMsg;
 pub use self::run::Generator;
