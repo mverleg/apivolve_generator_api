@@ -5,6 +5,7 @@
 //! It is up to the generator's author to test that the output makes sense.
 
 use std::path::PathBuf;
+use semver::Version;
 
 fn noop_generator() {}
 
@@ -35,7 +36,7 @@ macro_rules! testsuite_full {
 }
 
 pub use testsuite_full;
-use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
+use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator, GenResult};
 
 type GenFn<G: Generator> = impl FnOnce(GenerationPreferences) -> G;
 
@@ -76,4 +77,27 @@ pub fn generate_with_pending<G: Generator>(
 }
 
 #[cfg(test)]
-testsuite_full!(noop_generator);
+struct NoopGenerator();
+
+#[cfg(test)]
+impl Generator for NoopGenerator {
+    async fn generate_pending(&mut self, evolution: Evolution) -> GenResult {
+        Ok(())
+    }
+
+    async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult {
+        Ok(())
+    }
+
+    async fn finalize(self) -> GenResult {
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+fn noop_generator_factory(_: GenerationPreferences) -> NoopGenerator {
+    NoopGenerator()
+}
+
+#[cfg(test)]
+testsuite_full!(AcceptsConfig{}, noop_generator_factory);
