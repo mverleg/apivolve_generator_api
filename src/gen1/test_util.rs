@@ -12,43 +12,36 @@ fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
-// macro_rules! testsuite_full {
-//     ($generator_func:ident, $test_func:ident) => {
-//         #[test]
-//         fn test_no_versions() {
-//             if let Err(err) = test_no_versions(generator_func) {
-//                 panic!("apivolve generator failed: {}", err);
-//             }
-//         }
-//     };
-//     ($generator_func:ident) => {
-//         testsuite_full!($generator_func, accept_all);
-//     };
-// }
+macro_rules! testsuite_full {
+    ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_iden: iden) => {
+        make_gen_test!(generate_no_versions, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
+        make_gen_test!(generate_core_features, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
+        make_gen_test!(generate_with_pending, $accepts_config_expr, $make_generator_expr, $verify_func_iden);
+    };
+    ($accepts_config_expr: expr, $make_generator_expr: expr) => {
+        testsuite_full!($accepts_config_expr: expr, $make_generator_expr: expr, accept_all);
+    };
+}
 
 pub use testsuite_full;
 use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
 
+type GenFn<G: Generator> = impl FnOnce(GenerationPreferences) -> G;
+
 macro_rules! make_gen_test {
-    ($generator_expr:expr, $test_func:ident) => {
+    ($test_iden: iden, $accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_iden: iden) => {
         #[test]
-        fn test_no_versions() {
-            if let Err(err) = test_no_versions(generator_func) {
-                panic!("apivolve generator failed: {}", err);
+        fn test_$test_iden(test_func: impl FnOnce(PathBuf)) {
+            let accepts_config: AcceptsConfig = $accepts_config_expr;
+            let make_generator: GenFn = $make_generator_expr;
+            let verify_func: impl FnOnce(PathBuf) = $verify_func_iden;
+            match $test_iden(accepts_config, make_generator) {
+                Ok(path) => $verify_func_iden(path),
+                Err(err) => panic!("apivolve generator failed: {}", err),
             }
         }
-    };
-}
-
-#[test]
-fn test_generate_no_versions(test_func: impl FnOnce(PathBuf)) {
-    match generate_no_versions(accepts_config, make_generator) {
-        Ok(path) => test_func(path),
-        Err(err) => panic!("apivolve generator failed: {}", err),
     }
 }
-
-type GenFn<G: Generator> = impl FnOnce(GenerationPreferences) -> G;
 
 pub fn generate_no_versions<G: Generator>(
     accepts_config: AcceptsConfig,
