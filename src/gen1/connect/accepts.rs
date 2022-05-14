@@ -18,10 +18,14 @@ pub struct AcceptsConfig {
 fn serialize() {
     let json = serde_json::to_string(&AcceptsConfig {
         apivolve_version: Version::new(1, 2, 4),
-        features: GenerateInputFeature::Steps,
+        features: vec![
+            GenerateInputFeature::Documentation,
+            GenerateInputFeature::Parser,
+            GenerateInputFeature::Validator,
+        ].into(),
         encoding: GenerateInputFormat::Json,
     })
-    .unwrap();
+        .unwrap();
     assert_eq!(
         json,
         "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"steps\",\"encoding\":\"json\"}"
@@ -34,7 +38,7 @@ fn deserialize() {
         "{\"apivolve_version\":\"1.2.4\",\
             \"data_structure\":\"steps\",\"encoding\":\"json\"}",
     )
-    .unwrap();
+        .unwrap();
     assert_eq!(
         config,
         AcceptsConfig {

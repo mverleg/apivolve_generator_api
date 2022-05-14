@@ -4,32 +4,49 @@ pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
-type FeatureCollection = SmallVec<[GenerateInputFeatures; 8]>;
+use ::smallvec::smallvec;
+use ::smallvec::SmallVec;
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+type FeatureCollection = SmallVec<[GenerateInputFeature; 8]>;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct GenerateInputFeatures {
     features: FeatureCollection,
 }
 
 impl GenerateInputFeatures {
-    pub fn new(features: impl Info<FeatureCollection>) -> Self {
+    pub fn new(features: impl Into<FeatureCollection>) -> Self {
         //TODO @mark: make features unique
+        let mut features = features.into();
+        features.sort_unstable();
+        features.dedup();
         GenerateInputFeatures {
-            features: SmallVec::new(),
+            features,
         }
+    }
+}
+
+impl From<Vec<GenerateInputFeature>> for GenerateInputFeatures {
+    fn from(features: Vec<GenerateInputFeature>) -> Self {
+        GenerateInputFeatures::new(features)
     }
 }
 
 impl Default for GenerateInputFeatures {
     fn default() -> Self {
         GenerateInputFeatures {
-            features: smallvec![GenerateInputFeature::Documentation, GenerateInputFeature::Parser, GenerateInputFeature::Validator],
+            features: smallvec![
+                GenerateInputFeature::Documentation,
+                GenerateInputFeature::Parser,
+                GenerateInputFeature::Validator,
+                GenerateInputFeature::Examples,
+            ],
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case", deny_unknown_fields)]
 pub enum GenerateInputFeature {
     /// Evolution documentation.
@@ -38,6 +55,8 @@ pub enum GenerateInputFeature {
     Parser,
     /// The steps a validation wouild take to raise the necessary validation errors.
     Validator,
+    /// Any example data that the evolution authors provided.
+    Examples,
 }
 
 impl Default for GenerateInputFeature {
