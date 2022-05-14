@@ -17,6 +17,7 @@ fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
     Ok(())
 }
 
+#[macro_export]
 macro_rules! testsuite_basic {
     ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
         make_gen_test!(test_no_versions, generate_no_versions, $accepts_config_expr, $make_generator_expr, $verify_func_ident);
@@ -29,6 +30,7 @@ macro_rules! testsuite_basic {
     };
 }
 
+#[macro_export]
 macro_rules! testsuite_full {
     ($accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
         testsuite_basic!($accepts_config_expr, $make_generator_expr, $verify_func_ident);

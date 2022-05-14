@@ -7,42 +7,44 @@ use ::serde::Serialize;
 use ::smallvec::smallvec;
 use ::smallvec::SmallVec;
 
-type FeatureCollection = SmallVec<[GenerateInputFeature; 8]>;
+type GenFeatureSet = SmallVec<[GenerateInputFeature; 8]>;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct GenerateInputFeatures {
-    features: FeatureCollection,
+pub struct GenFeatures {
+    features: GenFeatureSet,
 }
 
-impl GenerateInputFeatures {
-    pub fn new(features: impl Into<FeatureCollection>) -> Self {
+impl GenFeatures {
+    pub fn new(features: impl Into<GenFeatureSet>) -> Self {
         //TODO @mark: make features unique
         let mut features = features.into();
         features.sort_unstable();
         features.dedup();
-        GenerateInputFeatures {
+        GenFeatures {
             features,
         }
     }
-}
 
-impl From<Vec<GenerateInputFeature>> for GenerateInputFeatures {
-    fn from(features: Vec<GenerateInputFeature>) -> Self {
-        GenerateInputFeatures::new(features)
-    }
-}
-
-impl Default for GenerateInputFeatures {
-    fn default() -> Self {
-        GenerateInputFeatures {
-            features: smallvec![
+    pub fn all() -> Self {
+        Self::new(smallvec![
                 GenerateInputFeature::Documentation,
                 GenerateInputFeature::Parser,
                 GenerateInputFeature::Validator,
                 GenerateInputFeature::Examples,
-            ],
-        }
+            ])
+    }
+}
+
+impl From<Vec<GenerateInputFeature>> for GenFeatures {
+    fn from(features: Vec<GenerateInputFeature>) -> Self {
+        GenFeatures::new(features)
+    }
+}
+
+impl Default for GenFeatures {
+    fn default() -> Self {
+        GenFeatures::all()
     }
 }
 

@@ -1,7 +1,7 @@
 pub use ::semver::Version;
 
-pub use test_util::testsuite_basic;
-pub use test_util::testsuite_full;
+pub use self::test_util::testsuite_basic;
+pub use self::test_util::testsuite_full;
 
 pub use self::connect::accepts::AcceptsConfig;
 pub use self::connect::format::GenerateInputFormat;

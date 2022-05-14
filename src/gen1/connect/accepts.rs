@@ -3,14 +3,13 @@ use ::serde::Deserialize;
 use ::serde::Serialize;
 
 use crate::gen1::connect::format::GenerateInputFormat;
-use crate::gen1::connect::layout::GenerateInputFeature;
-use crate::gen1::connect::layout::GenerateInputFeatures;
+use crate::gen1::connect::layout::GenFeatures;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct AcceptsConfig {
     pub apivolve_version: Version,
-    pub features: GenerateInputFeatures,
+    pub features: GenFeatures,
     pub encoding: GenerateInputFormat,
 }
 
@@ -18,11 +17,7 @@ pub struct AcceptsConfig {
 fn serialize() {
     let json = serde_json::to_string(&AcceptsConfig {
         apivolve_version: Version::new(1, 2, 4),
-        features: vec![
-            GenerateInputFeature::Documentation,
-            GenerateInputFeature::Parser,
-            GenerateInputFeature::Validator,
-        ].into(),
+        features: GenFeatures::all(),
         encoding: GenerateInputFormat::Json,
     })
         .unwrap();
@@ -43,7 +38,7 @@ fn deserialize() {
         config,
         AcceptsConfig {
             apivolve_version: Version::new(1, 2, 4),
-            features: GenerateInputFeatures::default(),
+            features: GenFeatures::default(),
             encoding: GenerateInputFormat::Json,
         }
     )
