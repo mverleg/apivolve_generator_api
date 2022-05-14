@@ -1,5 +1,3 @@
-use ::std::fmt;
-
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
@@ -61,16 +59,3 @@ pub enum GenerateInputFeature {
     Examples,
 }
 
-impl Default for GenerateInputFeature {
-    fn default() -> Self {
-        GenerateInputFeature::Steps
-    }
-}
-
-impl fmt::Display for GenerateInputFeature {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            GenerateInputFeature::Steps => write!(f, "steps"),
-        }
-    }
-}

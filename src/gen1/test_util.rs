@@ -6,15 +6,30 @@
 
 use ::std::path::PathBuf;
 
-use ::async_trait::async_trait;
-use ::semver::Version;
-
-use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator, GenResult};
+use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
 
 fn noop_generator() {}
 
-fn accept_all(_output_dir: &PathBuf) -> Result<(), String> {
+fn accept_all(_output_dir: PathBuf) -> Result<(), String> {
     Ok(())
+}
+
+#[allow(unused_macros)]  // it is not unused, don't know why it's not being detected
+macro_rules! make_gen_test {
+    ($test_name: ident, $gen_test_ident: ident, $accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
+        #[test]
+        fn $test_name() {
+            let accepts_config: AcceptsConfig = $accepts_config_expr;
+            //let make_generator: FnOnce(GenerationPreferences) -> G = $make_generator_expr;
+            let make_generator = $make_generator_expr;
+            //let verify_func: FnOnce(PathBuf) = $verify_func_ident;
+            let verify_func = $verify_func_ident;
+            match $gen_test_ident(accepts_config, make_generator) {
+                Ok(path) => verify_func(path),
+                Err(err) => panic!("apivolve generator failed: {}", err),
+            };
+        }
+    }
 }
 
 #[macro_export]
@@ -37,27 +52,12 @@ macro_rules! testsuite_full {
         //TODO @mark: more tests
     };
     ($accepts_config_expr: expr, $make_generator_expr: expr) => {
-        testsuite_basic!($accepts_config_expr: expr, $make_generator_expr: expr, accept_all);
+        testsuite_basic!($accepts_config_expr, $make_generator_expr, accept_all);
     };
 }
 
 pub use testsuite_basic;
 pub use testsuite_full;
-
-macro_rules! make_gen_test {
-    ($test_name: ident, $gen_test_ident: ident, $accepts_config_expr: expr, $make_generator_expr: expr, $verify_func_ident: ident) => {
-        #[test]
-        fn $test_name() {
-            let accepts_config: AcceptsConfig = $accepts_config_expr;
-            let make_generator: FnOnce(GenerationPreferences) -> G = $make_generator_expr;
-            let verify_func: FnOnce(PathBuf) = $verify_func_ident;
-            match $gen_test_ident(accepts_config, make_generator) {
-                Ok(path) => $verify_func_ident(path),
-                Err(err) => panic!("apivolve generator failed: {}", err),
-            }
-        }
-    }
-}
 
 pub fn generate_no_versions<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
     accepts_config: AcceptsConfig,
@@ -81,32 +81,58 @@ pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) 
 }
 
 #[cfg(test)]
-struct NoopGenerator();
+mod tests {
+    use ::async_trait::async_trait;
+    use ::semver::Version;
 
-#[cfg(test)]
-#[async_trait]
-impl Generator for NoopGenerator {
-    async fn generate_pending(&mut self, evolution: Evolution) -> GenResult {
-        Ok(())
+    use crate::gen1::{AcceptsConfig, GenerateInputFormat, GenerationPreferences, Generator, GenResult};
+    use crate::gen1::connect::layout::GenFeatures;
+    use crate::gen1::Evolution;
+
+    use super::*;
+
+    struct NoopGenerator();
+
+    #[async_trait]
+    impl Generator for NoopGenerator {
+        async fn generate_pending(&mut self, evolution: Evolution) -> GenResult {
+            Ok(())
+        }
+
+        async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult {
+            Ok(())
+        }
+
+        async fn finalize(self) -> GenResult {
+            Ok(())
+        }
     }
 
-    async fn generate_version(&mut self, version: Version, evolution: Evolution) -> GenResult {
-        Ok(())
+    fn noop_generator_factory(_: GenerationPreferences) -> NoopGenerator {
+        NoopGenerator()
     }
 
-    async fn finalize(self) -> GenResult {
-        Ok(())
+    testsuite_full!(AcceptsConfig{
+        apivolve_version: Version::new(1, 0, 0),
+        features: GenFeatures::default(),
+        encoding: GenerateInputFormat::Json,
+    }, noop_generator_factory);
+
+
+    //TODO @mark: TEMPORARY! REMOVE THIS!
+    #[test]
+    fn test_no_versions2() {
+        let accepts_config: AcceptsConfig = AcceptsConfig {
+            apivolve_version: Version::new(1, 0, 0),
+            features: GenFeatures::default(),
+            encoding: GenerateInputFormat::Json,
+        };
+
+        let make_generator = noop_generator_factory;
+        let verify_func = accept_all;
+        match generate_no_versions(accepts_config, make_generator) {
+            Ok(path) => verify_func(path),
+            Err(err) => panic!("apivolve generator failed: {}", err),
+        };
     }
 }
-
-#[cfg(test)]
-fn noop_generator_factory(_: GenerationPreferences) -> NoopGenerator {
-    NoopGenerator()
-}
-
-#[cfg(test)]
-testsuite_full!(AcceptsConfig{
-    apivolve_version: Version::new(1, 0, 0),
-    encoding: GenerateInputFormat::Json,
-    ..Default::default()
-}, noop_generator_factory);
