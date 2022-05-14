@@ -1,6 +1,7 @@
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
+use ::smallvec::smallvec;
 
 use crate::gen1::connect::format::GenerateInputFormat;
 use crate::gen1::connect::layout::GenFeatures;
@@ -15,9 +16,15 @@ pub struct AcceptsConfig {
 
 #[test]
 fn serialize() {
+    let features = smallvec![
+        GenerateInputFeature::Parser,
+        GenerateInputFeature::Parser,
+        GenerateInputFeature::Validator,
+        GenerateInputFeature::Documentation,
+    ];
     let json = serde_json::to_string(&AcceptsConfig {
         apivolve_version: Version::new(1, 2, 4),
-        features: GenFeatures::all(),
+        features: GenFeatures::new(features),
         encoding: GenerateInputFormat::Json,
     })
         .unwrap();

@@ -117,22 +117,4 @@ mod tests {
         features: GenFeatures::default(),
         encoding: GenerateInputFormat::Json,
     }, noop_generator_factory);
-
-
-    //TODO @mark: TEMPORARY! REMOVE THIS!
-    #[test]
-    fn test_no_versions2() {
-        let accepts_config: AcceptsConfig = AcceptsConfig {
-            apivolve_version: Version::new(1, 0, 0),
-            features: GenFeatures::default(),
-            encoding: GenerateInputFormat::Json,
-        };
-
-        let make_generator = noop_generator_factory;
-        let verify_func = accept_all;
-        match generate_no_versions(accepts_config, make_generator) {
-            Ok(path) => verify_func(path),
-            Err(err) => panic!("apivolve generator failed: {}", err),
-        };
-    }
 }

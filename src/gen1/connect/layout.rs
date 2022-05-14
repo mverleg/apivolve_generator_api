@@ -5,7 +5,7 @@ use ::serde::Serialize;
 use ::smallvec::smallvec;
 use ::smallvec::SmallVec;
 
-type GenFeatureSet = SmallVec<[GenerateInputFeature; 8]>;
+type GenFeatureSet = SmallVec<[GenFeature; 8]>;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -25,17 +25,18 @@ impl GenFeatures {
     }
 
     pub fn all() -> Self {
-        Self::new(smallvec![
-                GenerateInputFeature::Documentation,
-                GenerateInputFeature::Parser,
-                GenerateInputFeature::Validator,
-                GenerateInputFeature::Examples,
-            ])
+        let mut features = smallvec![
+            GenFeature::Documentation,
+            GenFeature::Examples,
+            GenFeature::Parser,
+            GenFeature::Validator,
+        ];
+        Self::new(features)
     }
 }
 
-impl From<Vec<GenerateInputFeature>> for GenFeatures {
-    fn from(features: Vec<GenerateInputFeature>) -> Self {
+impl From<Vec<GenFeature>> for GenFeatures {
+    fn from(features: Vec<GenFeature>) -> Self {
         GenFeatures::new(features)
     }
 }
@@ -48,14 +49,14 @@ impl Default for GenFeatures {
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case", deny_unknown_fields)]
-pub enum GenerateInputFeature {
+pub enum GenFeature {
     /// Evolution documentation.
     Documentation,
+    /// Any example data that the evolution authors provided.
+    Examples,
     /// The steps a parser would take to generate the input per version.
     Parser,
     /// The steps a validation wouild take to raise the necessary validation errors.
     Validator,
-    /// Any example data that the evolution authors provided.
-    Examples,
 }
 
