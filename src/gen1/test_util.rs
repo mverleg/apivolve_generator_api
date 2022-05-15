@@ -94,29 +94,34 @@ pub fn generate_no_versions<G, GenFn>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
 ) -> Result<PathBuf, String>
-        where G: Generator, GenFn: FnOnce(GenerationPreferences) -> G {
+        where G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String> {
     let out_dir = TempDir::new("example").unwrap().into_path();
     let mut gen = make_generator(GenerationPreferences {
         apivolve_version: accepts_config.apivolve_version,
         output_dir: out_dir.clone(),
         extra_args: vec![]
-    });
-    block_on(gen.finalize());
+    })?;
+    block_on(generator_steps(gen))?;
     Ok(out_dir)
 }
 
-pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
+pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String>> (
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
 ) -> Result<PathBuf, String> {
     unimplemented!()
 }
 
-pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
+pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String>> (
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
 ) -> Result<PathBuf, String> {
     unimplemented!()
+}
+
+async fn generator_steps<G: Generator>(gen: G) -> Result<(), String> {
+    gen.finalize().await?;
+    Ok(())
 }
 
 #[cfg(test)]
@@ -151,8 +156,8 @@ mod tests {
         }
     }
 
-    fn noop_generator_factory(_: GenerationPreferences) -> NoopGenerator {
-        NoopGenerator()
+    fn noop_generator_factory(_: GenerationPreferences) -> Result<NoopGenerator, String> {
+        Ok(NoopGenerator())
     }
 
     testsuite_full!(
