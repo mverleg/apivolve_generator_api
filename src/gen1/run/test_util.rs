@@ -4,16 +4,14 @@
 //! this only provides the data and checks for [Result] and [panic!].
 //! It is up to the generator's author to test that the output makes sense.
 
-use ::std::path::PathBuf;
-use futures::executor::block_on;
+use ::futures::executor::block_on;
+use ::tempdir::TempDir;
 
-use tempdir::TempDir;
-
-use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
+use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator, GenResult};
 
 fn noop_generator() {}
 
-fn accept_all(_output_dir: TempDir) -> Result<(), String> {
+fn accept_all(_output_dir: TempDir) -> GenResult {
     Ok(())
 }
 
@@ -23,16 +21,28 @@ macro_rules! make_gen_test {
         #[test]
         fn $test_name() {
             let accepts_config: AcceptsConfig = $accepts_config_expr;
-            //let make_generator: FnOnce(GenerationPreferences) -> G = $make_generator_expr;
-            let make_generator = $make_generator_expr;
-            //let verify_func: FnOnce(PathBuf) = $verify_func_ident;
-            let verify_func = $verify_func_ident;
+            let make_generator = make_generator_expr_type_must_satisfy_this_signature($make_generator_expr);
+            let verify_func = verify_func_ident_type_must_satisfy_this_signature($verify_func_ident);
             match $gen_test_ident(accepts_config, make_generator) {
                 Ok(path) => verify_func(path),
                 Err(err) => panic!("apivolve generator failed: {}", err),
             };
         }
     };
+}
+
+#[inline]
+#[allow(unused)]  // used by macro
+fn make_generator_expr_type_must_satisfy_this_signature<G, F>(make_generator: F) -> F
+        where G: Generator, F: FnOnce(GenerationPreferences) -> Result<G, String> {
+    make_generator
+}
+
+#[inline]
+#[allow(unused)]  // used by macro
+fn verify_func_ident_type_must_satisfy_this_signature<F>(verify_func: F) -> F
+        where F: FnOnce(TempDir) -> GenResult {
+    verify_func
 }
 
 #[macro_export]
@@ -85,9 +95,7 @@ macro_rules! testsuite_full {
     };
 }
 
-#[rustfmt::skip]
 pub use testsuite_basic;
-#[rustfmt::skip]
 pub use testsuite_full;
 
 pub fn generate_no_versions<G, GenFn>(
@@ -119,7 +127,7 @@ pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) 
     unimplemented!()
 }
 
-async fn generator_steps<G: Generator>(gen: G) -> Result<(), String> {
+async fn generator_steps<G: Generator>(gen: G) -> GenResult {
     gen.finalize().await?;
     Ok(())
 }

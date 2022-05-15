@@ -7,16 +7,14 @@ use crate::gen1::{AcceptsConfig, GenerationPreferences};
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(
     accepts_config: AcceptsConfig,
-    make_generator: impl FnOnce(GenerationPreferences) -> G,
-) {
+    make_generator: impl FnOnce(GenerationPreferences) -> Result<G, String>,
+) -> GenResult {
     //TODO @mark: auth
     //TODO @mark: send `accepts_config`
     let generator_preferences: GenerationPreferences = read_gen_preferences();
-    let generator: G = make_generator(generator_preferences);
+    let generator: G = make_generator(generator_preferences)?;
     //TODO @mark: use a better async runtime
-    if let Err(err) = block_on(generate_until_first_err(generator)) {
-        panic!("{}", err); //TODO @mark:
-    }
+    block_on(generate_until_first_err(generator))
 }
 
 async fn generate_until_first_err(mut generator: impl Generator) -> GenResult {
