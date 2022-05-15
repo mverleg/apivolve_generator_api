@@ -13,4 +13,4 @@ pub use self::run::run_generator;
 mod connect;
 mod evolution;
 mod run;
-mod test_gen;
+mod tests;
