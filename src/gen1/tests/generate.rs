@@ -47,7 +47,7 @@ pub(crate) fn test_with_data<G, GenFn>(
 ) -> Result<TempDir , String>
     where G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String> {
     let out_dir = TempDir::new("apivolve").unwrap();
-    let mut gen = make_generator(GenerationPreferences {
+    let gen = make_generator(GenerationPreferences {
         apivolve_version: accepts_config.apivolve_version,
         output_dir: out_dir.path().to_path_buf(),
         extra_args: vec![]

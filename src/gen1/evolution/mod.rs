@@ -1,6 +1,3 @@
-use ::serde::Deserialize;
-use ::serde::Serialize;
+pub use self::evolution::Evolution;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
-pub struct Evolution {}
+mod evolution;
