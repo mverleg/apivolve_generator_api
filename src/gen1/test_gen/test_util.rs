@@ -137,13 +137,9 @@ mod tests {
     use ::async_trait::async_trait;
     use ::semver::Version;
 
-    use crate::gen1::AcceptsConfig;
+    use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeatures;
     use crate::gen1::Evolution;
-    use crate::gen1::GenerateInputFormat;
-    use crate::gen1::GenerationPreferences;
-    use crate::gen1::Generator;
-    use crate::gen1::GenResult;
 
     use super::*;
 
