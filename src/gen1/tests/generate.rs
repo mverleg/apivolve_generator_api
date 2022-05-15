@@ -1,3 +1,8 @@
+use ::futures::executor::block_on;
+use ::semver::Version;
+use ::tempdir::TempDir;
+
+use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator, GenResult};
 
 #[allow(unused_macros)] // it is not unused, don't know why it's not being detected
 macro_rules! make_gen_test {
@@ -33,3 +38,31 @@ macro_rules! make_gen_test {
 }
 
 pub(crate) use make_gen_test;
+
+pub(crate) fn test_with_data<G, GenFn>(
+    accepts_config: AcceptsConfig,
+    make_generator: GenFn,
+    pending: Option<Evolution>,
+    versions: Vec<(Version, Evolution)>,
+) -> Result<TempDir , String>
+    where G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String> {
+    let out_dir = TempDir::new("apivolve").unwrap();
+    let mut gen = make_generator(GenerationPreferences {
+        apivolve_version: accepts_config.apivolve_version,
+        output_dir: out_dir.path().to_path_buf(),
+        extra_args: vec![]
+    })?;
+    block_on(generator_steps(gen, pending, versions))?;
+    Ok(out_dir)
+}
+
+async fn generator_steps<G: Generator>(mut gen: G, pending: Option<Evolution>, versions: Vec<(Version, Evolution)>) -> GenResult {
+    if let Some(pending) = pending {
+        gen.generate_pending(pending).await?;
+    }
+    for (version, evolution) in versions {
+        gen.generate_version(version, evolution).await?;
+    }
+    gen.finalize().await?;
+    Ok(())
+}
