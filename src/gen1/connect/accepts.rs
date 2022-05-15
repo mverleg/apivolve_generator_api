@@ -48,9 +48,7 @@ mod tests {
     fn deserialize() {
         let config: AcceptsConfig = serde_json::from_str(
             r#"{"apivolve_version":"1.2.4","features":{"features":[
-        "parser","validator"]},"encoding":"json"}"#,
-        )
-        .unwrap();
+            "parser","validator"]},"encoding":"json"}"#).unwrap();
         assert_eq!(
             config,
             AcceptsConfig {
