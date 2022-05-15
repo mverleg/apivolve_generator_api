@@ -1,7 +1,3 @@
-use ::futures::executor::block_on;
-use ::tempdir::TempDir;
-
-use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator, GenResult};
 
 #[allow(unused_macros)] // it is not unused, don't know why it's not being detected
 macro_rules! make_gen_test {
@@ -24,7 +20,9 @@ macro_rules! make_gen_test {
             let make_generator = make_generator_expr_type_must_satisfy_this_signature($make_generator_expr);
             let verify_func = verify_func_ident_type_must_satisfy_this_signature($verify_func_ident);
             match $gen_test_ident(accepts_config, make_generator) {
-                Ok(path) => verify_func(path),
+                Ok(path) => if let Err(err) = verify_func(path) {
+                    panic!("apivolve generator output was not valid: {}", err)
+                },
                 Err(err) => panic!("apivolve generator failed: {}", err),
             };
         }

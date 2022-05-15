@@ -1,17 +1,21 @@
+#![allow(unused)]  // linter gets very confused by macros and flags most code as unused, so supporess.
+
+use ::async_trait::async_trait;
+use ::semver::Version;
 use ::tempdir::TempDir;
 
-pub use testsuite_basic;
-pub use testsuite_full;
-
+use crate::gen1::{AcceptsConfig, Evolution, GenerateInputFormat, GenerationPreferences, Generator};
+use crate::gen1::connect::layout::GenFeatures;
 use crate::gen1::GenResult;
 
-use super::generate::generate_no_versions;
+use super::*;
 use super::generate::make_gen_test;
+use super::generate_core_features;
+use super::generate_no_versions;
+use super::generate_with_pending;
 
-#[allow(dead_code)]  // used in macro
 fn noop_generator() {}
 
-#[allow(dead_code)]  // used in macro
 fn accept_all(_output_dir: TempDir) -> GenResult {
     Ok(())
 }
@@ -66,43 +70,35 @@ macro_rules! testsuite_full {
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use ::async_trait::async_trait;
-    use ::semver::Version;
+pub use testsuite_basic;
+pub use testsuite_full;
 
-    use crate::gen1::{AcceptsConfig, Evolution, GenerateInputFormat, GenerationPreferences, Generator};
-    use crate::gen1::connect::layout::GenFeatures;
+struct NoopGenerator();
 
-    use super::*;
-
-    struct NoopGenerator();
-
-    #[async_trait]
-    impl Generator for NoopGenerator {
-        async fn generate_pending(&mut self, _evolution: Evolution) -> GenResult {
-            Ok(())
-        }
-
-        async fn generate_version(&mut self, _version: Version, _evolution: Evolution) -> GenResult {
-            Ok(())
-        }
-
-        async fn finalize(self) -> GenResult {
-            Ok(())
-        }
+#[async_trait]
+impl Generator for NoopGenerator {
+    async fn generate_pending(&mut self, _evolution: Evolution) -> GenResult {
+        Ok(())
     }
 
-    fn noop_generator_factory(_: GenerationPreferences) -> Result<NoopGenerator, String> {
-        Ok(NoopGenerator())
+    async fn generate_version(&mut self, _version: Version, _evolution: Evolution) -> GenResult {
+        Ok(())
     }
 
-    testsuite_full!(
-        AcceptsConfig {
-            apivolve_version: Version::new(1, 0, 0),
-            features: GenFeatures::default(),
-            encoding: GenerateInputFormat::Json,
-        },
-        noop_generator_factory
-    );
+    async fn finalize(self) -> GenResult {
+        Ok(())
+    }
 }
+
+fn noop_generator_factory(_: GenerationPreferences) -> Result<NoopGenerator, String> {
+    Ok(NoopGenerator())
+}
+
+testsuite_full!(
+    AcceptsConfig {
+        apivolve_version: Version::new(1, 0, 0),
+        features: GenFeatures::default(),
+        encoding: GenerateInputFormat::Json,
+    },
+    noop_generator_factory
+);

@@ -7,3 +7,7 @@
 mod generate;
 mod suite;
 mod testdata;
+
+pub use self::suite::testsuite_basic;
+pub use self::suite::testsuite_full;
+pub use self::testdata::*;
