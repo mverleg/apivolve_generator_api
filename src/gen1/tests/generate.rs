@@ -16,7 +16,10 @@ macro_rules! make_gen_test {
                 verify_func
             }
 
-            let accepts_config: AcceptsConfig = $accepts_config_expr;
+            let customization: AcceptsCustomizations = $accepts_config_expr;
+            let accepts_config = customization.to_accepts(
+                Version::new(0, 1, 0),  //TODO @mark
+                GenerateInputFormat::Json,);
             let make_generator = make_generator_expr_type_must_satisfy_this_signature($make_generator_expr);
             let verify_func = verify_func_ident_type_must_satisfy_this_signature($verify_func_ident);
             match $gen_test_ident(accepts_config, make_generator) {

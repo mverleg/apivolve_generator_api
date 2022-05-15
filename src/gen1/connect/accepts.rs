@@ -5,12 +5,29 @@ use ::serde::Serialize;
 use crate::gen1::connect::format::GenerateInputFormat;
 use crate::gen1::connect::layout::GenFeatures;
 
+/// Specifies which inputs the generator expects from Apivolve.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct AcceptsConfig {
     pub apivolve_version: Version,
     pub features: GenFeatures,
     pub encoding: GenerateInputFormat,
+}
+
+/// Subset of [AcceptsConfig] that avoids the fields that can be derived automatically when using Rust.
+#[derive(Debug, PartialEq, Eq)]
+pub struct AcceptsCustomizations {
+    pub features: GenFeatures,
+}
+
+impl AcceptsCustomizations {
+    pub fn to_accepts(self, apivolve_version: Version, encoding: GenerateInputFormat,) -> AcceptsConfig {
+        AcceptsConfig {
+            apivolve_version,
+            features: self.features,
+            encoding,
+        }
+    }
 }
 
 #[cfg(test)]

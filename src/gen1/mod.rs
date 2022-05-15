@@ -1,5 +1,6 @@
 pub use ::semver::Version;
 
+pub use self::connect::accepts::AcceptsCustomizations;
 pub use self::connect::accepts::AcceptsConfig;
 pub use self::connect::format::GenerateInputFormat;
 pub use self::connect::genpref::GenerationPreferences;

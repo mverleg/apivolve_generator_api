@@ -4,7 +4,7 @@ use ::async_trait::async_trait;
 use ::semver::Version;
 use ::tempdir::TempDir;
 
-use crate::gen1::{AcceptsConfig, Evolution, GenerateInputFormat, GenerationPreferences, Generator};
+use crate::gen1::{AcceptsCustomizations, AcceptsConfig, Evolution, GenerateInputFormat, GenerationPreferences, Generator};
 use crate::gen1::connect::layout::GenFeatures;
 use crate::gen1::GenResult;
 
@@ -95,10 +95,8 @@ fn noop_generator_factory(_: GenerationPreferences) -> Result<NoopGenerator, Str
 }
 
 testsuite_full!(
-    AcceptsConfig {
-        apivolve_version: Version::new(1, 0, 0),
+    AcceptsCustomizations {
         features: GenFeatures::default(),
-        encoding: GenerateInputFormat::Json,
     },
     noop_generator_factory
 );
