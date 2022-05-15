@@ -1,10 +1,12 @@
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
+#[cfg(test)]
 use ::smallvec::smallvec;
 
 use crate::gen1::connect::format::GenerateInputFormat;
 use crate::gen1::connect::layout::GenFeatures;
+use crate::gen1::connect::layout::GenFeature;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -17,10 +19,10 @@ pub struct AcceptsConfig {
 #[test]
 fn serialize() {
     let features = smallvec![
-        GenerateInputFeature::Parser,
-        GenerateInputFeature::Parser,
-        GenerateInputFeature::Validator,
-        GenerateInputFeature::Documentation,
+        GenFeature::Parser,
+        GenFeature::Parser,
+        GenFeature::Validator,
+        GenFeature::Documentation,
     ];
     let json = serde_json::to_string(&AcceptsConfig {
         apivolve_version: Version::new(1, 2, 4),
@@ -30,22 +32,25 @@ fn serialize() {
         .unwrap();
     assert_eq!(
         json,
-        "{\"apivolve_version\":\"1.2.4\",\"data_structure\":\"steps\",\"encoding\":\"json\"}"
+        r#"{"apivolve_version":"1.2.4","features":{"features":["documentation","parser","validator"]},"encoding":"json"}"#
     );
 }
 
 #[test]
 fn deserialize() {
     let config: AcceptsConfig = serde_json::from_str(
-        "{\"apivolve_version\":\"1.2.4\",\
-            \"data_structure\":\"steps\",\"encoding\":\"json\"}",
+        r#"{"apivolve_version":"1.2.4","features":{"features":[
+        "parser","validator"]},"encoding":"json"}"#,
     )
         .unwrap();
     assert_eq!(
         config,
         AcceptsConfig {
             apivolve_version: Version::new(1, 2, 4),
-            features: GenFeatures::default(),
+            features: GenFeatures::new(smallvec![
+                GenFeature::Parser,
+                GenFeature::Validator,
+            ]),
             encoding: GenerateInputFormat::Json,
         }
     )
