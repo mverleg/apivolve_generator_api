@@ -19,19 +19,16 @@ impl GenFeatures {
         let mut features = features.into();
         features.sort_unstable();
         features.dedup();
-        GenFeatures {
-            features,
-        }
+        GenFeatures { features }
     }
 
     pub fn all() -> Self {
-        let mut features = smallvec![
+        Self::new(smallvec![
             GenFeature::Documentation,
             GenFeature::Examples,
             GenFeature::Parser,
             GenFeature::Validator,
-        ];
-        Self::new(features)
+        ])
     }
 }
 
@@ -59,4 +56,3 @@ pub enum GenFeature {
     /// The steps a validation wouild take to raise the necessary validation errors.
     Validator,
 }
-
