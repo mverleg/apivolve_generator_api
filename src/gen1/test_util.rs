@@ -13,7 +13,7 @@ use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
 
 fn noop_generator() {}
 
-fn accept_all(_output_dir: PathBuf) -> Result<(), String> {
+fn accept_all(_output_dir: TempDir) -> Result<(), String> {
     Ok(())
 }
 
@@ -93,12 +93,12 @@ pub use testsuite_full;
 pub fn generate_no_versions<G, GenFn>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
-) -> Result<PathBuf, String>
+) -> Result<TempDir , String>
         where G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String> {
-    let out_dir = TempDir::new("example").unwrap().into_path();
+    let out_dir = TempDir::new("apivolve").unwrap();
     let mut gen = make_generator(GenerationPreferences {
         apivolve_version: accepts_config.apivolve_version,
-        output_dir: out_dir.clone(),
+        output_dir: out_dir.path().to_path_buf(),
         extra_args: vec![]
     })?;
     block_on(generator_steps(gen))?;
@@ -108,14 +108,14 @@ pub fn generate_no_versions<G, GenFn>(
 pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String>> (
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
-) -> Result<PathBuf, String> {
+) -> Result<TempDir, String> {
     unimplemented!()
 }
 
 pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) -> Result<G, String>> (
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
-) -> Result<PathBuf, String> {
+) -> Result<TempDir, String> {
     unimplemented!()
 }
 
