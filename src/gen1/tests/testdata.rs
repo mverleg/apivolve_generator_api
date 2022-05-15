@@ -1,7 +1,8 @@
 use ::futures::executor::block_on;
 use ::tempdir::TempDir;
+use semver::Version;
 
-use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator, GenResult};
+use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator, GenResult};
 
 pub fn generate_no_versions<G, GenFn>(
     accepts_config: AcceptsConfig,
@@ -14,7 +15,7 @@ pub fn generate_no_versions<G, GenFn>(
         output_dir: out_dir.path().to_path_buf(),
         extra_args: vec![]
     })?;
-    block_on(generator_steps(gen))?;
+    block_on(generator_steps(gen, None, vec![]))?;
     Ok(out_dir)
 }
 
@@ -32,7 +33,13 @@ pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) 
     unimplemented!()
 }
 
-async fn generator_steps<G: Generator>(gen: G) -> GenResult {
+async fn generator_steps<G: Generator>(mut gen: G, pending: Option<Evolution>, versions: Vec<(Version, Evolution)>) -> GenResult {
+    if let Some(pending) = pending {
+        gen.generate_pending(pending).await?;
+    }
+    for (version, evolution) in versions {
+        gen.generate_version(version, evolution).await?;
+    }
     gen.finalize().await?;
     Ok(())
 }
