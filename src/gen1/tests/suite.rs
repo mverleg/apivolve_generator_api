@@ -1,7 +1,11 @@
 use ::tempdir::TempDir;
 
+pub use testsuite_basic;
+pub use testsuite_full;
+
 use crate::gen1::GenResult;
 
+use super::generate::generate_no_versions;
 use super::generate::make_gen_test;
 
 #[allow(dead_code)]  // used in macro
@@ -61,9 +65,6 @@ macro_rules! testsuite_full {
         testsuite_basic!($accepts_config_expr, $make_generator_expr, accept_all);
     };
 }
-
-pub use testsuite_basic;
-pub use testsuite_full;
 
 #[cfg(test)]
 mod tests {
