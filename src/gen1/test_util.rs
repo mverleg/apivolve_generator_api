@@ -5,6 +5,9 @@
 //! It is up to the generator's author to test that the output makes sense.
 
 use ::std::path::PathBuf;
+use futures::executor::block_on;
+
+use tempdir::TempDir;
 
 use crate::gen1::{AcceptsConfig, GenerationPreferences, Generator};
 
@@ -82,14 +85,24 @@ macro_rules! testsuite_full {
     };
 }
 
+#[rustfmt::skip]
 pub use testsuite_basic;
+#[rustfmt::skip]
 pub use testsuite_full;
 
-pub fn generate_no_versions<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
+pub fn generate_no_versions<G, GenFn>(
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
-) -> Result<PathBuf, String> {
-    unimplemented!()
+) -> Result<PathBuf, String>
+        where G: Generator, GenFn: FnOnce(GenerationPreferences) -> G {
+    let out_dir = TempDir::new("example").unwrap().into_path();
+    let mut gen = make_generator(GenerationPreferences {
+        apivolve_version: accepts_config.apivolve_version,
+        output_dir: out_dir.clone(),
+        extra_args: vec![]
+    });
+    block_on(gen.finalize());
+    Ok(out_dir)
 }
 
 pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences) -> G>(
@@ -111,11 +124,13 @@ mod tests {
     use ::async_trait::async_trait;
     use ::semver::Version;
 
+    use crate::gen1::AcceptsConfig;
     use crate::gen1::connect::layout::GenFeatures;
     use crate::gen1::Evolution;
-    use crate::gen1::{
-        AcceptsConfig, GenResult, GenerateInputFormat, GenerationPreferences, Generator,
-    };
+    use crate::gen1::GenerateInputFormat;
+    use crate::gen1::GenerationPreferences;
+    use crate::gen1::Generator;
+    use crate::gen1::GenResult;
 
     use super::*;
 

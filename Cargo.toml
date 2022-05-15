@@ -19,4 +19,5 @@ log = { version = "0.4.14", features = ["release_max_level_info"] }
 futures = { version = "0.3.21" }
 async-trait = "0.1.53"
 smallvec = { version = "1.8.0", features = ["serde"] }
+tempdir = { version = "0.3.3" }
 #TODO @mark: found a cool feature but is this worth it? ^
