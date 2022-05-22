@@ -26,6 +26,10 @@ pub fn generate_with_pending<G: Generator, GenFn: FnOnce(GenerationPreferences) 
     accepts_config: AcceptsConfig,
     make_generator: GenFn,
 ) -> Result<TempDir, String> {
-    test_with_data(accepts_config, make_generator, None, vec![])?;
-    unimplemented!()
+    test_with_data(accepts_config, make_generator, Some(
+        Evolution {},
+    ), vec![
+        (Version::new(0, 2, 0), Evolution {}),
+        (Version::new(0, 1, 0), Evolution {}),
+    ])
 }
