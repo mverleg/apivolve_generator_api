@@ -7,6 +7,8 @@ use ::std::time::Duration;
 
 use ::log::debug;
 
+//TODO @mark: use
+
 #[derive(Debug)]
 pub struct ReadyGuard {
     is_ready: Arc<AtomicBool>,

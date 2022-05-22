@@ -1,1 +1,2 @@
 mod monitor;
+mod newtype;
