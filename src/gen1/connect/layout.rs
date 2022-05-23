@@ -60,10 +60,41 @@ pub enum GenFeature {
     Validator,
 }
 
+#[macro_export]
+macro_rules! make_gate {
+    ($gate_name: ident, feature_name: expr) => {
+
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum Gate<T: Debug + Clone> {
     Enabled(T),
     Disabled,
+}
+
+impl <T: Debug + Clone> Gate<T> {
+    pub fn of(value: T) -> Self {
+        Gate::Enabled(value)
+    }
+
+    pub fn none() -> Self {
+        Gate::Disabled
+    }
+
+    pub fn get(&self) -> &T {
+        match self {
+            Gate::Enabled(value) => &value,
+            Gate::Disabled => panic!("Feature is disabled"),
+        }
+    }
+
+    pub fn unwrap(self) -> T {
+        match self {
+            Gate::Enabled(value) => value,
+            Gate::Disabled => panic!("Feature is disabled"),
+        }
+    }
 }
 
 impl <T> PartialEq for Gate<T>
