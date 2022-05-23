@@ -1,9 +1,9 @@
-use std::fmt::Debug;
-use std::hash::{Hash, Hasher};
+use ::std::fmt::Debug;
+use ::std::hash::{Hash, Hasher};
+
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
-
 use ::smallvec::smallvec;
 use ::smallvec::SmallVec;
 
@@ -60,63 +60,78 @@ pub enum GenFeature {
     Validator,
 }
 
-#[macro_export]
 macro_rules! make_gate {
-    ($gate_name: ident, feature_name: expr) => {
+    ($GateName: ident, $feature_name: expr) => {
+        #[derive(Debug, Clone)]
+        pub enum $GateName<T: Debug + Clone> {
+            Enabled(T),
+            Disabled,
+        }
 
+        impl <T: Debug + Clone> $GateName<T> {
+            pub fn of(value: T) -> Self {
+                $GateName::Enabled(value)
+            }
+
+            pub fn none() -> Self {
+                $GateName::Disabled
+            }
+
+            pub fn get(&self) -> &T {
+                match self {
+                    $GateName::Enabled(value) => &value,
+                    $GateName::Disabled => panic!("Feature '{}' is disabled", $feature_name),
+                }
+            }
+
+            pub fn unwrap(self) -> T {
+                match self {
+                    $GateName::Enabled(value) => value,
+                    $GateName::Disabled => panic!("Feature '{}' is disabled", $feature_name),
+                }
+            }
+        }
+
+        impl <T> PartialEq for $GateName<T>
+                where T: PartialEq + Debug + Clone {
+            fn eq(&self, other: &Self) -> bool {
+                match (self, other) {
+                    ($GateName::Enabled(a), $GateName::Enabled(b)) => a == b,
+                    ($GateName::Disabled, $GateName::Disabled) => true,
+                    _ => false,
+                }
+            }
+        }
+
+        impl <T> Eq for $GateName<T>
+                where T: Eq + Debug + Clone, $GateName<T>: PartialEq {}
+
+        impl <T> Hash for $GateName<T>
+                where T: Hash + Debug + Clone {
+            fn hash<H: Hasher>(&self, state: &mut H) {
+                state.write_u8(37);
+                if let $GateName::Enabled(value) = self {
+                    value.hash(state);
+                }
+            }
+        }
     }
 }
 
-#[derive(Debug, Clone)]
-pub enum Gate<T: Debug + Clone> {
-    Enabled(T),
-    Disabled,
-}
+make_gate!(DocumentationGate, "documentation");
+make_gate!(ExamplesGate, "examples");
+make_gate!(ParserGate, "parser");
+make_gate!(ValidatorGate, "validator");
 
-impl <T: Debug + Clone> Gate<T> {
-    pub fn of(value: T) -> Self {
-        Gate::Enabled(value)
-    }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    pub fn none() -> Self {
-        Gate::Disabled
-    }
+    make_gate!(TestGate, "testgate");
 
-    pub fn get(&self) -> &T {
-        match self {
-            Gate::Enabled(value) => &value,
-            Gate::Disabled => panic!("Feature is disabled"),
-        }
-    }
-
-    pub fn unwrap(self) -> T {
-        match self {
-            Gate::Enabled(value) => value,
-            Gate::Disabled => panic!("Feature is disabled"),
-        }
-    }
-}
-
-impl <T> PartialEq for Gate<T>
-        where T: PartialEq + Debug + Clone {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Gate::Enabled(a), Gate::Enabled(b)) => a == b,
-            (Gate::Disabled, Gate::Disabled) => true,
-            _ => false,
-        }
-    }
-}
-
-impl <T> Eq for Gate<T>
-        where T: Eq + Debug + Clone, Gate<T>: PartialEq {}
-
-impl <T> Hash for Gate<T>
-        where T: Hash + Debug + Clone {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        state.write_u8(37);
-        if let Gate::Enabled(value) = self {
-            value.hash(state);
-        }
+    #[test]
+    fn gate() {
+        let gate = TestGate::of("test");
+        assert_eq!(gate.get(), &"test");
     }
 }
