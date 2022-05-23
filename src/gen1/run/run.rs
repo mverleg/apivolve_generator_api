@@ -6,7 +6,7 @@ use crate::gen1::{AcceptsConfig, GenerationPreferences};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(
-    accepts_config: AcceptsConfig,
+    _accepts_config: AcceptsConfig,
     make_generator: impl FnOnce(GenerationPreferences) -> Result<G, String>,
 ) -> GenResult {
     //TODO @mark: auth

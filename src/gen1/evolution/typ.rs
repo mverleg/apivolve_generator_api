@@ -15,13 +15,10 @@ pub enum Typ {
     Text {
         length: Option<u64>,
     },
-    Collection(CollectionTyp),
+    HomogeneousCollection(CollectionTyp),
     HeterogeneousCollection(HeterogeneousCollectionTyp),
     Union {
-        options: Vec<Typ>,
-    },
-    Tuple {
-        values: Vec<Typ>,
+        options: Vec<NamedType>,
     },
     Object {
         values: Vec<NamedType>,

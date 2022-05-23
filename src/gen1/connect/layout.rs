@@ -62,12 +62,14 @@ pub enum GenFeature {
 
 macro_rules! make_gate {
     ($GateName: ident, $feature_name: expr) => {
+        #[allow(unused)]
         #[derive(Debug, Clone)]
         pub enum $GateName<T: Debug + Clone> {
             Enabled(T),
             Disabled,
         }
 
+        #[allow(unused)]
         impl <T: Debug + Clone> $GateName<T> {
             pub fn of(value: T) -> Self {
                 $GateName::Enabled(value)
