@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+use std::hash::{Hash, Hasher};
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
@@ -56,4 +58,34 @@ pub enum GenFeature {
     Parser,
     /// The steps a validation wouild take to raise the necessary validation errors.
     Validator,
+}
+
+#[derive(Debug, Clone)]
+pub enum Gate<T: Debug + Clone> {
+    Enabled(T),
+    Disabled,
+}
+
+impl <T> PartialEq for Gate<T>
+        where T: PartialEq + Debug + Clone {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Gate::Enabled(a), Gate::Enabled(b)) => a == b,
+            (Gate::Disabled, Gate::Disabled) => true,
+            _ => false,
+        }
+    }
+}
+
+impl <T> Eq for Gate<T>
+        where T: Eq + Debug + Clone, Gate<T>: PartialEq {}
+
+impl <T> Hash for Gate<T>
+        where T: Hash + Debug + Clone {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        state.write_u8(37);
+        if let Gate::Enabled(value) = self {
+            value.hash(state);
+        }
+    }
 }
