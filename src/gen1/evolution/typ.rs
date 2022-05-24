@@ -164,6 +164,12 @@ pub struct ObjectType {
     values: Vec<NamedType>,
 }
 
+impl ObjectType {
+    pub fn new(values: impl Into<Vec<NamedType>>) -> Self {
+        ObjectType { values: values.into() }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct HomogeneousCollectionType {
