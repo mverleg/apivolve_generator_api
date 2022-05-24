@@ -10,9 +10,11 @@ pub enum Typ {
     Int,
     Real,
     Bytes {
+        #[serde(default, skip_serializing_if = "is_default")]
         length: Length,
     },
     Text {
+        #[serde(default, skip_serializing_if = "is_default")]
         length: Length,
     },
     HomogeneousCollection(HomogeneousCollectionTyp),
@@ -66,7 +68,9 @@ impl Default for Unicity {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Length {
+    #[serde(default, skip_serializing_if = "is_default")]
     min: u64,
+    #[serde(default, skip_serializing_if = "is_default")]
     max: Option<u64>,
 }
 
@@ -109,14 +113,19 @@ pub struct NamedType {
 #[serde(deny_unknown_fields)]
 pub struct HomogeneousCollectionTyp {
     element_type: Box<Typ>,
+    #[serde(default, skip_serializing_if = "is_default")]
     ordering: CollectionOrdering,
+    #[serde(default, skip_serializing_if = "is_default")]
     unique: Unicity,
+    #[serde(default, skip_serializing_if = "is_default")]
     length: Length,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct HeterogeneousCollectionTyp {
+    #[serde(default, skip_serializing_if = "is_default")]
     ordering: CollectionOrdering,
+    #[serde(default, skip_serializing_if = "is_default")]
     length: Length,
 }
