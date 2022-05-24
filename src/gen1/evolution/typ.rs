@@ -18,8 +18,6 @@ pub enum Typ {
     Object(ObjectType),
 }
 
-//TODO @mark: how about dyanmic maps without fixed keys?
-//TODO @mark: how about tuples with heterogeneous fields?
 //TODO @mark: are maps needed? how to deal with static vs dynamic type of keys and values? 4 combis?
 
 fn is_default<T: Default + PartialEq>(t: &T) -> bool {
