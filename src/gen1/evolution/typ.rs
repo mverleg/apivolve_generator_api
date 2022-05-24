@@ -155,18 +155,36 @@ pub struct TextType {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct UnionType {
+    id: u64,
+    name: Option<Identifier>,
     options: Vec<NamedType>,
+}
+
+impl UnionType {
+    pub fn new(name: Option<Identifier>, options: impl Into<Vec<NamedType>>,) -> Self {
+        UnionType {
+            id: 0,  //TODO @mark:
+            name,
+            options: options.into(),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ObjectType {
+    id: u64,
+    name: Option<Identifier>,
     values: Vec<NamedType>,
 }
 
 impl ObjectType {
-    pub fn new(values: impl Into<Vec<NamedType>>) -> Self {
-        ObjectType { values: values.into() }
+    pub fn new(name: Option<Identifier>, values: impl Into<Vec<NamedType>>,) -> Self {
+        ObjectType {
+            id: 0,  //TODO @mark:
+            name,
+            values: values.into(),
+        }
     }
 }
 
