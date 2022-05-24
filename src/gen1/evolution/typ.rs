@@ -10,12 +10,12 @@ pub enum Typ {
     Int,
     Real,
     Bytes {
-        length: Option<u64>,
+        length: Length,
     },
     Text {
-        length: Option<u64>,
+        length: Length,
     },
-    HomogeneousCollection(CollectionTyp),
+    HomogeneousCollection(HomogeneousCollectionTyp),
     HeterogeneousCollection(HeterogeneousCollectionTyp),
     Union {
         options: Vec<NamedType>,
@@ -29,56 +29,72 @@ pub enum Typ {
 //TODO @mark: how about tuples with heterogeneous fields?
 //TODO @mark: are maps needed? how to deal with static vs dynamic type of keys and values? 4 combis?
 
+fn is_default<T: Default + PartialEq>(t: &T) -> bool {
+    t == &T::default()
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum CollectionOrdering {
-    Sorted,
-    Ordered,
     Arbitrary,
+    Ordered,
+    Sorted,
+}
+
+impl Default for CollectionOrdering {
+    fn default() -> Self {
+        CollectionOrdering::Arbitrary
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Unicity {
+    NonUnique,
     Unique,
     /// Only applicable if the element type is a Tuple, in which case the collection is
     /// interpreted as a dict and the first element is the key (must be hashable).
     FirstUnique,
-    NonUnique,
+}
+
+impl Default for Unicity {
+    fn default() -> Self {
+        Unicity::NonUnique
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub enum Length {
-    Unknown,
-    /// Inclusive
-    AtLeast(u64),
-    /// Inclusive
-    Between(u64, u64),
+pub struct Length {
+    min: u64,
+    max: Option<u64>,
 }
 
 impl Length {
     pub fn unknown() -> Self {
-        Length::Unknown
+        Length { min: 0, max: None }
     }
 
     pub fn fixed(len: u64) -> Self {
-        Length::between(len, len)
+        Length { min: len, max: Some(len) }
     }
 
     pub fn at_least(min_len: u64) -> Self {
-        if min_len == 0 {
-            return Length::Unknown
-        }
-        Length::AtLeast(min_len)
+        Length { min: min_len, max: None }
     }
 
     pub fn at_most(max_len: u64) -> Self {
-        Length::between(0, max_len)
+        Length { min: 0, max: Some(max_len) }
     }
 
     pub fn between(min_len: u64, max_len: u64) -> Self {
-        Length::Between(min_len, max_len)
+        Length { min: min_len, max: Some(max_len) }
+    }
+}
+
+impl Default for Length {
+    fn default() -> Self {
+        Length::unknown()
     }
 }
 
@@ -91,7 +107,7 @@ pub struct NamedType {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct CollectionTyp {
+pub struct HomogeneousCollectionTyp {
     element_type: Box<Typ>,
     ordering: CollectionOrdering,
     unique: Unicity,
@@ -102,5 +118,5 @@ pub struct CollectionTyp {
 #[serde(deny_unknown_fields)]
 pub struct HeterogeneousCollectionTyp {
     ordering: CollectionOrdering,
-    length: Option<u64>,
+    length: Length,
 }
