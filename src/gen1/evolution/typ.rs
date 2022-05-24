@@ -5,20 +5,14 @@ use crate::gen1::evolution::util::Identifier;
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Typ {
-    Empty,
-    Bool,
-    Int,
-    Real,
-    Bytes {
-        #[serde(default, skip_serializing_if = "is_default")]
-        length: Length,
-    },
-    Text {
-        #[serde(default, skip_serializing_if = "is_default")]
-        length: Length,
-    },
-    HomogeneousCollection(HomogeneousCollectionTyp),
-    HeterogeneousCollection(HeterogeneousCollectionTyp),
+    Empty(EmptyType),
+    Bool(BoolType),
+    Int(IntType),
+    Real(RealType),
+    Bytes(BytesType),
+    Text(TextType),
+    HomogeneousCollection(HomogeneousCollectionType),
+    HeterogeneousCollection(HeterogeneousCollectionType),
     Union {
         options: Vec<NamedType>,
     },
@@ -111,7 +105,37 @@ pub struct NamedType {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct HomogeneousCollectionTyp {
+pub struct EmptyType {}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct BoolType {}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct IntType {}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct RealType {}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct BytesType {
+    #[serde(default, skip_serializing_if = "is_default")]
+    length: Length,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct TextType {
+    #[serde(default, skip_serializing_if = "is_default")]
+    length: Length,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct HomogeneousCollectionType {
     element_type: Box<Typ>,
     #[serde(default, skip_serializing_if = "is_default")]
     ordering: CollectionOrdering,
@@ -123,7 +147,7 @@ pub struct HomogeneousCollectionTyp {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct HeterogeneousCollectionTyp {
+pub struct HeterogeneousCollectionType {
     #[serde(default, skip_serializing_if = "is_default")]
     ordering: CollectionOrdering,
     #[serde(default, skip_serializing_if = "is_default")]
@@ -136,13 +160,13 @@ mod tests {
 
     #[test]
     fn serialize_homogeneous() {
-        let inp = Typ::HomogeneousCollection(HomogeneousCollectionTyp {
-            element_type: Box::new(Typ::Text {
+        let inp = Typ::HomogeneousCollection(HomogeneousCollectionType {
+            element_type: Box::new(Typ::Text(TextType {
                 length: Length::unknown()
-            }),
+            })),
             ordering: CollectionOrdering::Arbitrary,
             unique: Unicity::NonUnique,
-            length: Length::at_least(10)
+            length: Length::at_least(10),
         });
         let json = serde_json::to_string(&inp).unwrap();
         assert_eq!(json, r#"{"type":"homogeneous_collection","element_type":{"type":"text"},"length":{"min":10}}"#)
@@ -150,7 +174,7 @@ mod tests {
 
     #[test]
     fn serialize_heterogeneous() {
-        let inp = Typ::HeterogeneousCollection(HeterogeneousCollectionTyp {
+        let inp = Typ::HeterogeneousCollection(HeterogeneousCollectionType {
             ordering: CollectionOrdering::Sorted,
             length: Length::between(1, 100),
         });
