@@ -129,3 +129,32 @@ pub struct HeterogeneousCollectionTyp {
     #[serde(default, skip_serializing_if = "is_default")]
     length: Length,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn serialize_homogeneous() {
+        let inp = Typ::HomogeneousCollection(HomogeneousCollectionTyp {
+            element_type: Box::new(Typ::Text {
+                length: Length::unknown()
+            }),
+            ordering: CollectionOrdering::Arbitrary,
+            unique: Unicity::NonUnique,
+            length: Length::at_least(10)
+        });
+        let json = serde_json::to_string(&inp).unwrap();
+        assert_eq!(json, r#"{"type":"homogeneous_collection","element_type":{"type":"text"},"length":{"min":10}}"#)
+    }
+
+    #[test]
+    fn serialize_heterogeneous() {
+        let inp = Typ::HeterogeneousCollection(HeterogeneousCollectionTyp {
+            ordering: CollectionOrdering::Sorted,
+            length: Length::between(1, 100),
+        });
+        let json = serde_json::to_string(&inp).unwrap();
+        assert_eq!(json, r#"{"type":"heterogeneous_collection","ordering":{"type":"sorted"},"length":{"min":1,"max":100}}"#)
+    }
+}
