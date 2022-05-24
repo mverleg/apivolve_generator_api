@@ -1,5 +1,6 @@
 use ::serde::Deserialize;
 use ::serde::Serialize;
+
 use crate::gen1::evolution::util::Identifier;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -13,12 +14,8 @@ pub enum Typ {
     Text(TextType),
     HomogeneousCollection(HomogeneousCollectionType),
     HeterogeneousCollection(HeterogeneousCollectionType),
-    Union {
-        options: Vec<NamedType>,
-    },
-    Object {
-        values: Vec<NamedType>,
-    },
+    Union(UnionType),
+    Object(ObjectType),
 }
 
 //TODO @mark: how about dyanmic maps without fixed keys?
@@ -98,14 +95,11 @@ impl Default for Length {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
-pub enum IntFormat {
+pub enum IntWidth {
     Byte,
-    Signed16bit,
-    Unsigned16bit,
-    Signed32bit,
-    Unsigned32bit,
-    Signed64bit,
-    Unsigned64bit,
+    Bit16,
+    Bit32,
+    Bit64,
     Unlimited,
 }
 
@@ -136,7 +130,8 @@ pub struct BoolType {}
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct IntType {
-    format: IntFormat,
+    width: IntWidth,
+    signed: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -157,6 +152,18 @@ pub struct BytesType {
 pub struct TextType {
     #[serde(default, skip_serializing_if = "is_default")]
     length: Length,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct UnionType {
+    options: Vec<NamedType>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ObjectType {
+    values: Vec<NamedType>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
