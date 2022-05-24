@@ -48,14 +48,11 @@ pub enum Unicity {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(tag = "type", rename_all = "snake_case")]
+#[serde(deny_unknown_fields)]
 pub enum Length {
     Unknown,
-    Fixed(u64),
     /// Inclusive
     AtLeast(u64),
-    /// Inclusive
-    AtMost(u64),
     /// Inclusive
     Between(u64, u64),
 }
@@ -66,7 +63,7 @@ impl Length {
     }
 
     pub fn fixed(len: u64) -> Self {
-        Length::Fixed(len)
+        Length::between(len, len)
     }
 
     pub fn at_least(min_len: u64) -> Self {
@@ -77,7 +74,7 @@ impl Length {
     }
 
     pub fn at_most(max_len: u64) -> Self {
-        Length::AtMost(max_len)
+        Length::between(0, max_len)
     }
 
     pub fn between(min_len: u64, max_len: u64) -> Self {
