@@ -3,6 +3,8 @@ use ::serde::Serialize;
 
 use crate::gen1::evolution::util::Identifier;
 
+pub type TypId = u64;
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Typ {
@@ -14,12 +16,16 @@ pub enum Typ {
     Text(TextType),
     HomogeneousCollection(HomogeneousCollectionType),
     HeterogeneousCollection(HeterogeneousCollectionType),
-    //TODO @mark: references to unions/objects
+    ObjectRef(TypId),  //TODO @mark: or should this be split into record and union?
     //TODO @mark: generic type uses
+}
 
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum TypeDeclaration {
     //TODO @mark: split into declarations:
     Union(UnionType),
-    Object(ObjectType),
+    Record(RecordType),
     //TODO @mark: generic type declarations
 }
 
@@ -160,7 +166,7 @@ pub struct TextType {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct UnionType {
-    id: u64,
+    id: TypId,
     name: Option<Identifier>,
     options: Vec<NamedType>,
 }
@@ -177,15 +183,15 @@ impl UnionType {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct ObjectType {
-    id: u64,
+pub struct RecordType {
+    id: TypId,
     name: Option<Identifier>,
     values: Vec<NamedType>,
 }
 
-impl ObjectType {
+impl RecordType {
     pub fn new(name: Option<Identifier>, values: impl Into<Vec<NamedType>>,) -> Self {
-        ObjectType {
+        RecordType {
             id: 0,  //TODO @mark:
             name,
             values: values.into(),
@@ -193,7 +199,7 @@ impl ObjectType {
     }
 
     pub fn named(name: Identifier, values: impl Into<Vec<NamedType>>,) -> Self {
-        ObjectType::new(Some(name), values)
+        RecordType::new(Some(name), values)
     }
 }
 
