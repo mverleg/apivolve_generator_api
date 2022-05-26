@@ -16,8 +16,8 @@ pub enum Typ {
     Text(TextType),
     HomogeneousCollection(HomogeneousCollectionType),
     HeterogeneousCollection(HeterogeneousCollectionType),
-    ObjectRef(TypId),  //TODO @mark: or should this be split into record and union?
-    //TODO @mark: generic type uses
+    ObjectRef(TypId), //TODO @mark: or should this be split into record and union?
+                      //TODO @mark: generic type uses
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -80,19 +80,31 @@ impl Length {
     }
 
     pub fn fixed(len: u64) -> Self {
-        Length { min: len, max: Some(len) }
+        Length {
+            min: len,
+            max: Some(len),
+        }
     }
 
     pub fn at_least(min_len: u64) -> Self {
-        Length { min: min_len, max: None }
+        Length {
+            min: min_len,
+            max: None,
+        }
     }
 
     pub fn at_most(max_len: u64) -> Self {
-        Length { min: 0, max: Some(max_len) }
+        Length {
+            min: 0,
+            max: Some(max_len),
+        }
     }
 
     pub fn between(min_len: u64, max_len: u64) -> Self {
-        Length { min: min_len, max: Some(max_len) }
+        Length {
+            min: min_len,
+            max: Some(max_len),
+        }
     }
 }
 
@@ -172,9 +184,9 @@ pub struct UnionType {
 }
 
 impl UnionType {
-    pub fn new(name: Option<Identifier>, options: impl Into<Vec<NamedType>>,) -> Self {
+    pub fn new(name: Option<Identifier>, options: impl Into<Vec<NamedType>>) -> Self {
         UnionType {
-            id: 0,  //TODO @mark:
+            id: 0, //TODO @mark:
             name,
             options: options.into(),
         }
@@ -190,15 +202,15 @@ pub struct RecordType {
 }
 
 impl RecordType {
-    pub fn new(name: Option<Identifier>, values: impl Into<Vec<NamedType>>,) -> Self {
+    pub fn new(name: Option<Identifier>, values: impl Into<Vec<NamedType>>) -> Self {
         RecordType {
-            id: 0,  //TODO @mark:
+            id: 0, //TODO @mark:
             name,
             values: values.into(),
         }
     }
 
-    pub fn named(name: Identifier, values: impl Into<Vec<NamedType>>,) -> Self {
+    pub fn named(name: Identifier, values: impl Into<Vec<NamedType>>) -> Self {
         RecordType::new(Some(name), values)
     }
 }
@@ -232,14 +244,17 @@ mod tests {
     fn serialize_homogeneous() {
         let inp = Typ::HomogeneousCollection(HomogeneousCollectionType {
             element_type: Box::new(Typ::Text(TextType {
-                length: Length::unknown()
+                length: Length::unknown(),
             })),
             ordering: CollectionOrdering::Arbitrary,
             unique: Unicity::NonUnique,
             length: Length::at_least(10),
         });
         let json = serde_json::to_string(&inp).unwrap();
-        assert_eq!(json, r#"{"type":"homogeneous_collection","element_type":{"type":"text"},"length":{"min":10}}"#)
+        assert_eq!(
+            json,
+            r#"{"type":"homogeneous_collection","element_type":{"type":"text"},"length":{"min":10}}"#
+        )
     }
 
     #[test]
@@ -249,6 +264,9 @@ mod tests {
             length: Length::between(1, 100),
         });
         let json = serde_json::to_string(&inp).unwrap();
-        assert_eq!(json, r#"{"type":"heterogeneous_collection","ordering":{"type":"sorted"},"length":{"min":1,"max":100}}"#)
+        assert_eq!(
+            json,
+            r#"{"type":"heterogeneous_collection","ordering":{"type":"sorted"},"length":{"min":1,"max":100}}"#
+        )
     }
 }

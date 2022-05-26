@@ -21,7 +21,11 @@ pub struct AcceptsCustomizations {
 }
 
 impl AcceptsCustomizations {
-    pub fn to_accepts(self, apivolve_version: Version, encoding: GenerateInputFormat,) -> AcceptsConfig {
+    pub fn to_accepts(
+        self,
+        apivolve_version: Version,
+        encoding: GenerateInputFormat,
+    ) -> AcceptsConfig {
         AcceptsConfig {
             apivolve_version,
             features: self.features,
@@ -65,7 +69,9 @@ mod tests {
     fn deserialize() {
         let config: AcceptsConfig = serde_json::from_str(
             r#"{"apivolve_version":"1.2.4","features":{"features":[
-            "parser","validator"]},"encoding":"json"}"#).unwrap();
+            "parser","validator"]},"encoding":"json"}"#,
+        )
+        .unwrap();
         assert_eq!(
             config,
             AcceptsConfig {

@@ -1,18 +1,21 @@
-#![allow(unused)]  // linter gets very confused by macros and flags most code as unused, so supporess.
+#![allow(unused)] // linter gets very confused by macros and flags most code as unused, so supporess.
 
 use ::async_trait::async_trait;
 use ::semver::Version;
 use ::tempdir::TempDir;
 
-use crate::gen1::{AcceptsCustomizations, AcceptsConfig, Evolution, GenerateInputFormat, GenerationPreferences, Generator};
 use crate::gen1::connect::layout::GenFeatures;
 use crate::gen1::GenResult;
+use crate::gen1::{
+    AcceptsConfig, AcceptsCustomizations, Evolution, GenerateInputFormat, GenerationPreferences,
+    Generator,
+};
 
-use super::*;
 use super::generate::make_gen_test;
 use super::generate_core_features;
 use super::generate_no_versions;
 use super::generate_with_pending;
+use super::*;
 
 fn noop_generator() {}
 

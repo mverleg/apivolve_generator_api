@@ -3,6 +3,6 @@ pub use self::evolution::Message;
 pub use self::typ::*;
 pub use self::util::Identifier;
 
-mod typ;
 mod evolution;
+mod typ;
 mod util;

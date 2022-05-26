@@ -14,7 +14,7 @@ pub struct Evolution {
 impl Evolution {
     pub fn new(messages: impl Into<SmallVec<[Message; 2]>>) -> Self {
         Evolution {
-            messages: messages.into()
+            messages: messages.into(),
         }
     }
 }
@@ -28,8 +28,6 @@ pub struct Message {
 
 impl Message {
     pub fn new(data: RecordType) -> Self {
-        Message {
-            data
-        }
+        Message { data }
     }
 }

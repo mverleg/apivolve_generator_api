@@ -70,7 +70,7 @@ macro_rules! make_gate {
         }
 
         #[allow(unused)]
-        impl <T: Debug + Clone> $GateName<T> {
+        impl<T: Debug + Clone> $GateName<T> {
             pub fn of(value: T) -> Self {
                 $GateName::Enabled(value)
             }
@@ -94,8 +94,10 @@ macro_rules! make_gate {
             }
         }
 
-        impl <T> PartialEq for $GateName<T>
-                where T: PartialEq + Debug + Clone {
+        impl<T> PartialEq for $GateName<T>
+        where
+            T: PartialEq + Debug + Clone,
+        {
             fn eq(&self, other: &Self) -> bool {
                 match (self, other) {
                     ($GateName::Enabled(a), $GateName::Enabled(b)) => a == b,
@@ -105,11 +107,17 @@ macro_rules! make_gate {
             }
         }
 
-        impl <T> Eq for $GateName<T>
-                where T: Eq + Debug + Clone, $GateName<T>: PartialEq {}
+        impl<T> Eq for $GateName<T>
+        where
+            T: Eq + Debug + Clone,
+            $GateName<T>: PartialEq,
+        {
+        }
 
-        impl <T> Hash for $GateName<T>
-                where T: Hash + Debug + Clone {
+        impl<T> Hash for $GateName<T>
+        where
+            T: Hash + Debug + Clone,
+        {
             fn hash<H: Hasher>(&self, state: &mut H) {
                 state.write_u8(37);
                 if let $GateName::Enabled(value) = self {
@@ -117,7 +125,7 @@ macro_rules! make_gate {
                 }
             }
         }
-    }
+    };
 }
 
 make_gate!(DocumentationGate, "documentation");
