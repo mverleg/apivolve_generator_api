@@ -14,8 +14,13 @@ pub enum Typ {
     Text(TextType),
     HomogeneousCollection(HomogeneousCollectionType),
     HeterogeneousCollection(HeterogeneousCollectionType),
+    //TODO @mark: references to unions/objects
+    //TODO @mark: generic type uses
+
+    //TODO @mark: split into declarations:
     Union(UnionType),
     Object(ObjectType),
+    //TODO @mark: generic type declarations
 }
 
 //TODO @mark: are maps needed? how to deal with static vs dynamic type of keys and values? 4 combis?
@@ -185,6 +190,10 @@ impl ObjectType {
             name,
             values: values.into(),
         }
+    }
+
+    pub fn named(name: Identifier, values: impl Into<Vec<NamedType>>,) -> Self {
+        ObjectType::new(Some(name), values)
     }
 }
 

@@ -3,6 +3,7 @@ use ::smallvec::smallvec;
 use ::tempdir::TempDir;
 
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator};
+use crate::gen1::evolution::Identifier;
 use crate::gen1::evolution::ObjectType;
 use crate::gen1::tests::generate::test_with_data;
 
@@ -20,9 +21,13 @@ pub fn generate_core_features<G: Generator, GenFn: FnOnce(GenerationPreferences)
 ) -> Result<TempDir, String> {
     test_with_data(accepts_config, make_generator, None, vec![
         (Version::new(0, 2, 0), Evolution { objects: smallvec![
-            ObjectType::new(vec![]),
+            //TODO @mark: fields
+            ObjectType::named(Identifier::new("person").unwrap(), vec![]),
         ] }),
-        (Version::new(0, 1, 0), Evolution {}),
+        (Version::new(0, 1, 0), Evolution { objects: smallvec![
+            //TODO @mark: fields
+            ObjectType::named(Identifier::new("person").unwrap(), vec![]),
+        ] }),
     ])
 }
 
