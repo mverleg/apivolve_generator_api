@@ -2,11 +2,14 @@ use ::semver::Version;
 use ::smallvec::smallvec;
 use ::tempdir::TempDir;
 
-use crate::gen1::evolution::Identifier;
-use crate::gen1::evolution::Message;
-use crate::gen1::evolution::RecordType;
-use crate::gen1::tests::generate::test_with_data;
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator};
+use crate::gen1::evolution::{Identifier, IntWidth, Length, Signed, Typ};
+use crate::gen1::evolution::IntType;
+use crate::gen1::evolution::Message;
+use crate::gen1::evolution::NamedType;
+use crate::gen1::evolution::RecordType;
+use crate::gen1::evolution::TextType;
+use crate::gen1::tests::generate::test_with_data;
 
 pub fn generate_no_versions<G, GenFn>(
     accepts_config: AcceptsConfig,
@@ -86,7 +89,10 @@ pub fn generate_with_pending<
                         //TODO @mark: fields
                         Message::new(RecordType::named(
                             Identifier::new("person").unwrap(),
-                            vec![]
+                            vec![
+                                NamedType::new(Identifier::new("name").unwrap(), Typ::Text(TextType::new(Length::unknown()))),
+                                NamedType::new(Identifier::new("balance").unwrap(), Typ::Int(IntType::new(IntWidth::Bit32, Signed::Signed))),
+                            ]
                         )),
                     ],
                 },

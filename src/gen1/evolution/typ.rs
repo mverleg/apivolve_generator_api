@@ -126,6 +126,19 @@ pub enum IntWidth {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
+pub enum Signed {
+    Signed,
+    Unsigned
+}
+
+impl Signed {
+    pub fn is_signed(&self) -> bool {
+        matches!(self, Signed::Signed)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum RealFormat {
     IEEE754_32bit,
     IEEE754_64bit,
@@ -140,6 +153,12 @@ pub struct NamedType {
     typ: Typ,
 }
 
+impl NamedType {
+    pub fn new(name: Identifier, typ: Typ) -> Self {
+        NamedType { name, typ }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct EmptyType {}
@@ -152,13 +171,25 @@ pub struct BoolType {}
 #[serde(deny_unknown_fields)]
 pub struct IntType {
     width: IntWidth,
-    signed: bool,
+    signed: Signed,
+}
+
+impl IntType {
+    pub fn new(width: IntWidth, signed: Signed) -> Self {
+        IntType { width, signed }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct RealType {
     format: RealFormat,
+}
+
+impl RealType {
+    pub fn new(format: RealFormat) -> Self {
+        RealType { format }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -173,6 +204,12 @@ pub struct BytesType {
 pub struct TextType {
     #[serde(default, skip_serializing_if = "is_default")]
     length: Length,
+}
+
+impl TextType {
+    pub fn new(length: Length) -> Self {
+        TextType { length }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
