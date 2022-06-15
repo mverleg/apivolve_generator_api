@@ -36,7 +36,7 @@ pub fn generate_core_features<
             (
                 Version::new(0, 2, 0),
                 Evolution {
-                    declarations: vec![
+                    operations: vec![
                         //TODO @mark: fields
                         Message::new(RecordType::named(
                             Identifier::new("person").unwrap(),
@@ -49,7 +49,7 @@ pub fn generate_core_features<
             (
                 Version::new(0, 1, 0),
                 Evolution {
-                    declarations: vec![
+                    operations: vec![
                         //TODO @mark: fields
                         Message::new(RecordType::named(
                             Identifier::new("person").unwrap(),
@@ -74,7 +74,7 @@ pub fn generate_with_pending<
         accepts_config,
         make_generator,
         Some(Evolution {
-            declarations: vec![
+            operations: vec![
                 //TODO @mark: fields
                 Message::new(RecordType::named(
                     Identifier::new("person").unwrap(),
@@ -87,7 +87,7 @@ pub fn generate_with_pending<
             (
                 Version::new(0, 2, 0),
                 Evolution {
-                    declarations: vec![
+                    operations: vec![
                         //TODO @mark: fields
                         Message::new(RecordType::named(
                             Identifier::new("person").unwrap(),
@@ -103,7 +103,7 @@ pub fn generate_with_pending<
             (
                 Version::new(0, 1, 0),
                 Evolution {
-                    declarations: vec![
+                    operations: vec![
                         //TODO @mark: fields
                         Message::new(RecordType::named(
                             Identifier::new("person").unwrap(),
