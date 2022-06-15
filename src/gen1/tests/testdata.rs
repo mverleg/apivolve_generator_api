@@ -1,5 +1,4 @@
 use ::semver::Version;
-use ::smallvec::smallvec;
 use ::tempdir::TempDir;
 
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator};
