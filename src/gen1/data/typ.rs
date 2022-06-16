@@ -1,8 +1,8 @@
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
+use crate::util::Identifier;
 
-use crate::gen1::evolution::util::Identifier;
 pub type TypId = u64;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]

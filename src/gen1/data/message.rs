@@ -2,9 +2,9 @@ use ::std::fmt;
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::evolution::TypeDeclaration;
-
-use crate::gen1::evolution::util::{Identifier, Range};
+use crate::gen1::data::TypeDeclaration;
+use crate::util::Identifier;
+use crate::util::Range;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -29,12 +29,12 @@ impl fmt::Display for Party {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ResponseChoice {
-    choices: Vec<[Message; 1]>,
+    choices: Vec<Message>,
     count: Range,
 }
 
 impl ResponseChoice {
-    pub fn new(choices: Vec<[Message; 1]>, count: Range) -> Self {
+    pub fn new(choices: Vec<Message>, count: Range) -> Self {
         ResponseChoice {
             choices,
             count,

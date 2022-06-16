@@ -2,8 +2,6 @@ use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
-use crate::gen1::evolution::message::{Message, Party};
-
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Evolution {
@@ -35,13 +33,4 @@ pub enum MessageOperation {
     Handle {
         typ: Message,
     },
-}
-
-impl Evolution {
-    pub fn new(operations: impl Into<Vec<MessageOperation>>, messages: impl Into<Vec<Message>>) -> Self {
-        Evolution {
-            operations: operations.into(),
-            messages: messages.into(),
-        }
-    }
 }

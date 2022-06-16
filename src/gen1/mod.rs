@@ -12,6 +12,7 @@ pub use self::run::GenResult;
 pub use self::run::Generator;
 
 mod connect;
+mod data;
 mod evolution;
 mod run;
 mod tests;
