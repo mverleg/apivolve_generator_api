@@ -2,7 +2,7 @@ use ::semver::Version;
 use ::tempdir::TempDir;
 
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator};
-use crate::gen1::data::{IntWidth, Length, NamedType, RecordType, Signed, TextType, Typ};
+use crate::gen1::data::{IntWidth, Length, Message, NamedType, RecordType, Signed, TextType, Typ};
 use crate::gen1::tests::generate::test_with_data;
 use crate::util::Identifier;
 
