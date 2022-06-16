@@ -1,5 +1,6 @@
+pub use self::message::Message;
+pub use self::message::Party;
 pub use self::typ::*;
-pub use crate::util::Identifier;
 
 mod typ;
 mod message;
