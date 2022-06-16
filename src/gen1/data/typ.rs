@@ -16,8 +16,8 @@ pub enum Typ {
     Text(TextType),
     HomogeneousCollection(HomogeneousCollectionType),
     HeterogeneousCollection(HeterogeneousCollectionType),
-    ObjectRef(TypId), //TODO @mark: or should this be split into record and union?
-                      //TODO @mark: generic type uses
+    Ref(DeclarationRef),
+    //TODO @mark: generic type uses
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -29,4 +29,9 @@ pub enum TypeDeclaration {
     //TODO @mark: generic type declarations
 }
 
-//TODO @mark: are maps needed? how to deal with static vs dynamic type of keys and values? 4 combis?
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct DeclarationRef {
+    id: TypId,
+}
+

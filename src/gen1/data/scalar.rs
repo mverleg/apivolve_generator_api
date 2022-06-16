@@ -1,7 +1,6 @@
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::data::{BytesType, HeterogeneousCollectionType, HomogeneousCollectionType, RecordType, TextType, UnionType};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
