@@ -20,12 +20,13 @@ impl Party {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(tag = "type", rename_all = "snake_case")]
+#[serde(deny_unknown_fields)]
 //TODO @mark: name
-pub enum ResponseChoice {
-    Optional(SmallVec<[Message; 1]>),
-    Required(SmallVec<[Message; 1]>),
-    //TODO @mark: multiple?
+pub struct ResponseChoice {
+    choices: SmallVec<[Message; 1]>,
+    //TODO @mark: make sure min <= max
+    min_count: u32,
+    max_count: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -41,12 +42,13 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(sender: Party, recipient: Party, content: Typ, response: impl Into<SmallVec<[Message; 1]>>) -> Self {
+    pub fn new(name: Identifier, sender: Party, recipient: Party, content: Typ, response: ResponseChoice) -> Self {
         Message {
+            name,
             sender,
             recipient,
             content,
-            response: response.into(),
+            response,
         }
     }
 }
