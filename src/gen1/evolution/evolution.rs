@@ -3,7 +3,6 @@ use ::serde::Deserialize;
 use ::serde::Serialize;
 
 use crate::gen1::evolution::typ::RecordType;
-use crate::gen1::evolution::TypeDeclaration;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]

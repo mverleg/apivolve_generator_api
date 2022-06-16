@@ -1,4 +1,3 @@
-use core::num::fmt::Part;
 use ::serde::Deserialize;
 use ::serde::Serialize;
 use crate::gen1::evolution::Typ;
@@ -14,8 +13,26 @@ pub struct Party {
 impl Party {
     pub fn new(name: Identifier) -> Self {
         Party {
-            name: Identifier,
+            name,
         }
     }
 }
 
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct Message {
+    sender: Party,
+    //TODO @mark: e.g. specific client, set of clients or all clients?
+    recipient: Party,
+    content: Typ,
+}
+
+impl Message {
+    pub fn new(sender: Party, recipient: Party, content: Typ) -> Self {
+        Message {
+            sender,
+            recipient,
+            content,
+        }
+    }
+}
