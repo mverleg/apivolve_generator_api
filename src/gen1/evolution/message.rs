@@ -2,8 +2,8 @@ use ::std::fmt;
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
+use crate::gen1::evolution::TypeDeclaration;
 
-use crate::gen1::evolution::{RecordType, Typ, TypeDeclaration};
 use crate::gen1::evolution::util::{Identifier, Range};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -42,7 +42,7 @@ impl ResponseChoice {
     }
 
     pub fn choices(&self) -> &[Message] {
-        self.choices.as_ref()
+        &self.choices
     }
 
     pub fn count(&self) -> Range {

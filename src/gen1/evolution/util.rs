@@ -34,12 +34,19 @@ pub struct Range {
 }
 
 impl Range {
-    pub fn new(min: u32, max: u32) -> Self {
-        assert!(min <= max);
-        Range {
+    pub fn try_new(min: u32, max: u32) -> Option<Self> {
+        if min > max {
+            return None
+        }
+        Some(Range {
             min,
             max
-        }
+        })
+    }
+
+    pub fn new(min: u32, max: u32) -> Self {
+        Range::try_new(min, max)
+            .unwrap_or_else(|| panic!("not a valid range: {} to {} inclusive", min, max))
     }
 
     pub fn single_value(value: u32) -> Self {
