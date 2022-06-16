@@ -2,7 +2,8 @@ use ::std::fmt;
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::data::TypeDeclaration;
+use crate::gen1::data::DeclarationRef;
+
 use crate::util::Identifier;
 use crate::util::Range;
 
@@ -57,13 +58,13 @@ pub struct Message {
     sender: Party,
     //TODO @mark: e.g. specific client, set of clients or all clients?
     recipient: Party,
-    content: TypeDeclaration,
+    content: DeclarationRef,
     /// One of these messages can be the response; empty means no response,
     response: ResponseChoice,
 }
 
 impl Message {
-    pub fn new(name: Identifier, sender: Party, recipient: Party, content: TypeDeclaration, response: ResponseChoice) -> Self {
+    pub fn new(name: Identifier, sender: Party, recipient: Party, content: DeclarationRef, response: ResponseChoice) -> Self {
         Message {
             name,
             sender,

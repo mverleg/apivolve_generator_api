@@ -15,7 +15,7 @@ pub enum Typ {
     Bytes(BytesType),
     Text(TextType),
     HomogeneousCollection(Box<HomogeneousCollectionType>),
-    HeterogeneousCollection(Box<HeterogeneousCollectionType>),
+    HeterogeneousCollection(HeterogeneousCollectionType),
     Ref(DeclarationRef),
     //TODO @mark: generic type uses
 }
