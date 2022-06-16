@@ -4,7 +4,6 @@ use ::tempdir::TempDir;
 use crate::gen1::{AcceptsConfig, Evolution, GenerationPreferences, Generator};
 use crate::gen1::evolution::{Identifier, IntWidth, Length, Signed, Typ};
 use crate::gen1::evolution::IntType;
-use crate::gen1::evolution::Message;
 use crate::gen1::evolution::NamedType;
 use crate::gen1::evolution::RecordType;
 use crate::gen1::evolution::TextType;
