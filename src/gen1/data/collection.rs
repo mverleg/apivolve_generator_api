@@ -111,7 +111,7 @@ impl TextType {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct HomogeneousCollectionType {
-    element_type: Box<Typ>,
+    element_type: Typ,
     #[serde(default, skip_serializing_if = "is_default")]
     ordering: CollectionOrdering,
     #[serde(default, skip_serializing_if = "is_default")]
@@ -135,14 +135,14 @@ mod tests {
 
     #[test]
     fn serialize_homogeneous() {
-        let inp = Typ::HomogeneousCollection(HomogeneousCollectionType {
-            element_type: Box::new(Typ::Text(TextType {
+        let inp = Typ::HomogeneousCollection(Box::new(HomogeneousCollectionType {
+            element_type: Typ::Text(TextType {
                 length: Length::unknown(),
-            })),
+            }),
             ordering: CollectionOrdering::Arbitrary,
             unique: Unicity::NonUnique,
             length: Length::at_least(10),
-        });
+        }));
         let json = serde_json::to_string(&inp).unwrap();
         assert_eq!(
             json,
@@ -152,10 +152,10 @@ mod tests {
 
     #[test]
     fn serialize_heterogeneous() {
-        let inp = Typ::HeterogeneousCollection(HeterogeneousCollectionType {
+        let inp = Typ::HeterogeneousCollection(Box::new(HeterogeneousCollectionType {
             ordering: CollectionOrdering::Sorted,
             length: Length::between(1, 100),
-        });
+        }));
         let json = serde_json::to_string(&inp).unwrap();
         assert_eq!(
             json,
