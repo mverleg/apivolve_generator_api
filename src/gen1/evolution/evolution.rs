@@ -8,35 +8,37 @@ use crate::gen1::evolution::TypeDeclaration;
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct Evolution {
-    pub operations: Vec<TypeOperation>,
-    pub messages: Vec<Message>,
+    pub declaration: Vec<DeclarationStatus>,
+    pub messages: Vec<MessageOperation>,
 }
+
+//TODO @mark: I should switch from messages to protocols (interactions of messages)
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
-pub enum TypeOperation {
-    /// This object is the same as in the given later version.
+pub enum MessageOperation {
+    /// This message is the same as in the given later version.
     Unchanged {
         same_as: Version,
-        typ: TypeDeclaration,
+        typ: Message,
     },
-    /// This object is new or changed, but will be converted to a newer
+    /// This message is new or changed, but will be converted to a newer
     /// version after parsing, it won't be handled by user code.
     Convert {
-        parse_typ: TypeDeclaration,
+        parse_typ: Message,
         target_version: Version,
-        target_typ: TypeDeclaration,
+        target_typ: Message,
     },
     /// This object is new or changed, and will be handled by user code,
     /// either because it is the latest version, or because there was a
     /// backwards-incompatible change.
     Handle {
-        typ: TypeDeclaration,
+        typ: Message,
     },
 }
 
 impl Evolution {
-    pub fn new(operations: impl Into<Vec<TypeOperation>>, messages: impl Into<Vec<Message>>) -> Self {
+    pub fn new(operations: impl Into<Vec<MessageOperation>>, messages: impl Into<Vec<Message>>) -> Self {
         Evolution {
             operations: operations.into(),
             messages: messages.into(),

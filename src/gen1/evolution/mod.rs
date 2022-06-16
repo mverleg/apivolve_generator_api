@@ -5,4 +5,5 @@ pub use self::util::Identifier;
 
 mod evolution;
 mod typ;
+mod message;
 mod util;
