@@ -152,10 +152,10 @@ mod tests {
 
     #[test]
     fn serialize_heterogeneous() {
-        let inp = Typ::HeterogeneousCollection(Box::new(HeterogeneousCollectionType {
+        let inp = Typ::HeterogeneousCollection(HeterogeneousCollectionType {
             ordering: CollectionOrdering::Sorted,
             length: Length::between(1, 100),
-        }));
+        });
         let json = serde_json::to_string(&inp).unwrap();
         assert_eq!(
             json,

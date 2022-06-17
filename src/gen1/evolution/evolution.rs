@@ -1,3 +1,5 @@
+use ::std::fmt;
+
 use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
@@ -6,7 +8,10 @@ use crate::gen1::data::{Message, Party, TypeDeclaration};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct Evolution {
+pub struct VersionEvolution {
+    pub version: Version,
+    #[serde(flatten)]
+    pub checksum: Checksum,
     pub declaration: Vec<(ChangeStatus, TypeDeclaration)>,
     pub parties: Vec<(ChangeStatus, Party)>,
     pub messages: Vec<MessageOperation>,
@@ -19,7 +24,9 @@ pub enum ChangeStatus {
         same_as: Version,
     },
     New,
-    Changed,
+    Changed {
+        previous: Version,
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -43,4 +50,16 @@ pub enum MessageOperation {
     Implement {
         typ: Message,
     },
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct Checksum {
+    value: String,
+}
+
+impl fmt::Display for Checksum {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.value)
+    }
 }

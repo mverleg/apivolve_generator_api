@@ -1,3 +1,3 @@
-pub use self::evolution::Evolution;
+pub use self::evolution::VersionEvolution;
 
 mod evolution;
