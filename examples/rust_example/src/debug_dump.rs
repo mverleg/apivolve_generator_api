@@ -10,7 +10,7 @@ fn main() {
         data_structure: gen::GenerateInputLayout::Steps,
         encoding: gen::GenerateInputFormat::Json,
     };
-    gen::run_generator(config, |prefs| DebugDumpGenerator::new(prefs));
+    gen::run_generator(config, DebugDumpGenerator::new);
 }
 
 #[derive(Debug)]
