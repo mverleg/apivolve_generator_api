@@ -7,7 +7,7 @@ fn main() {
     assert!(args().skip(1).next().is_none(), "no arguments expected");
     let config = gen::AcceptsConfig {
         apivolve_version: gen::Version::new(0, 1, 0),
-        data_structure: gen::GenerateInputLayout::Steps,
+        features: gen::GenFeatures::new(),
         encoding: gen::GenerateInputFormat::Json,
     };
     gen::run_generator(config, DebugDumpGenerator::new);

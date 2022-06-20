@@ -1,8 +1,8 @@
 use ::futures::executor::block_on;
 use ::semver::Version;
 
-use crate::gen1::run::gen_trait::{GenResult, Generator};
 use crate::gen1::{AcceptsConfig, GenerationPreferences};
+use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(
@@ -37,5 +37,6 @@ fn read_gen_preferences() -> GenerationPreferences {
         apivolve_version: Version::new(0, 0, 1),
         output_dir: Default::default(),
         extra_args: vec![],
+        for_party: None,
     }
 }
