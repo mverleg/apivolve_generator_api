@@ -36,7 +36,7 @@ mod tests {
         ];
         let json = serde_json::to_string(&EvolutionPreferences {
             features: GenFeatures::new(features),
-            generate_parties: smallvec![Party::new(Identifier::new("server"))]
+            generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())]
         })
             .unwrap();
         assert_eq!(
@@ -56,7 +56,7 @@ mod tests {
             config,
             EvolutionPreferences {
                 features: GenFeatures::new(smallvec![GenFeature::Parser, GenFeature::Validator,]),
-                generate_parties: smallvec![Party::new(Identifier::new("server"))]
+                generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())]
             }
         )
     }

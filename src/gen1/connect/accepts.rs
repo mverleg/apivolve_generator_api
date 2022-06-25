@@ -16,6 +16,7 @@ pub struct AcceptsConfig {
 mod tests {
     pub use ::semver::Version;
     use ::smallvec::smallvec;
+    use smallvec::SmallVec;
 
     use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeature;
