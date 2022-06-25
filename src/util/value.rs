@@ -1,4 +1,5 @@
 use ::std::fmt;
+use std::str::FromStr;
 
 use ::serde::Deserialize;
 use ::serde::Serialize;
@@ -22,6 +23,14 @@ impl Identifier {
 impl fmt::Display for Identifier {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", &self.name)
+    }
+}
+
+impl FromStr for Identifier {
+    type Err = ErrMsg;
+
+    fn from_str(text: &str) -> Result<Self, Self::Err> {
+        Identifier::new(text)
     }
 }
 
