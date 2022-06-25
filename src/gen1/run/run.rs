@@ -29,14 +29,10 @@ async fn generate_until_first_err(mut generator: impl Generator) -> GenResult {
 }
 
 fn read_gen_preferences() -> GenerationPreferences {
-    //TODO @mark: TEMPORARY! REMOVE THIS!
-    if 1 == 1 {
-        unimplemented!();
-    }
     GenerationPreferences {
         apivolve_version: Version::new(0, 0, 1),
         output_dir: Default::default(),
-        extra_args: vec![],
+        extra_args: vec!["--features=documentation,examples,parser,validator".to_owned()],
         for_party: None,
     }
 }

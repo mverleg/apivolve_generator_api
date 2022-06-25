@@ -21,7 +21,8 @@ Communication happens over a localhost TCP connection.
 
 * Apivolve runs the generator executable (without arguments).
 * The generator sends the configuration it expects to use ([`AcceptsConfig`](./src/gen1/connect/accepts.rs)).
-* Apivolve sends the generator options, such as output directory ([`GenerationPreferences`](./gen1/connect/genpref.rs)).
+* Apivolve sends the generator options, such as output directory and arguments ([`GenerationPreferences`](./gen1/connect/genpref.rs)).
+* The generator sends the features and parties it wants, with ([`EvolutionPreferences`](./gen1/connect/evpref.rs)).
 * Apivolve sends the requested information per version, one version at a time, from new to old.
 * For each of those, the generator generates the necessary code, and persists it.
 * Apivolve indicates that all versions have been sent, and the generator exits.

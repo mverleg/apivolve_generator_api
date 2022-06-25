@@ -1,15 +1,17 @@
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
+use smallvec::SmallVec;
 
-use crate::gen1::connect::format::GenerateInputFormat;
+use crate::gen1::connect::layout::GenFeatures;
+use crate::gen1::data::Party;
 
 /// Specifies which inputs the generator expects from Apivolve.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct AcceptsConfig {
-    pub apivolve_version: Version,
-    pub encoding: GenerateInputFormat,
+pub struct EvolutionPreferences {
+    pub features: GenFeatures,
+    pub parties: SmallVec<[Party; 3]>,
 }
 
 #[cfg(test)]
@@ -20,6 +22,7 @@ mod tests {
     use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeature;
     use crate::gen1::connect::layout::GenFeatures;
+    use crate::Identifier;
 
     use super::*;
 
@@ -31,11 +34,11 @@ mod tests {
             GenFeature::Validator,
             GenFeature::Documentation,
         ];
-        let json = serde_json::to_string(&AcceptsConfig {
-            apivolve_version: Version::new(1, 2, 4),
-            encoding: GenerateInputFormat::Json,
+        let json = serde_json::to_string(&EvolutionPreferences {
+            features: GenFeatures::new(features),
+            parties: smallvec![Party::new(Identifier::new("server"))]
         })
-        .unwrap();
+            .unwrap();
         assert_eq!(
             json,
             r#"{"apivolve_version":"1.2.4","features":{"features":["documentation","parser","validator"]},"encoding":"json"}"#
@@ -44,16 +47,16 @@ mod tests {
 
     #[test]
     fn deserialize() {
-        let config: AcceptsConfig = serde_json::from_str(
+        let config: EvolutionPreferences = serde_json::from_str(
             r#"{"apivolve_version":"1.2.4","features":{"features":[
             "parser","validator"]},"encoding":"json"}"#,
         )
-        .unwrap();
+            .unwrap();
         assert_eq!(
             config,
-            AcceptsConfig {
-                apivolve_version: Version::new(1, 2, 4),
-                encoding: GenerateInputFormat::Json,
+            EvolutionPreferences {
+                features: GenFeatures::new(smallvec![GenFeature::Parser, GenFeature::Validator,]),
+                parties: smallvec![Party::new(Identifier::new("server"))]
             }
         )
     }
