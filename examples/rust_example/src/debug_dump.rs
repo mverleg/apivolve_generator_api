@@ -6,14 +6,15 @@ use ::async_trait::async_trait;
 use ::std::env::args;
 
 fn main() {
+    //TODO @mark: make features configurable
     env_logger::init();
     assert!(args().skip(1).next().is_none(), "no arguments expected");
     let config = gen::AcceptsConfig {
         apivolve_version: gen::Version::new(0, 1, 0),
-        features: gen::GenFeatures::new(),
+        features: gen::GenFeatures::all(),
         encoding: gen::GenerateInputFormat::Json,
     };
-    gen::run_generator(config, DebugDumpGenerator::new);
+    gen::run_generator(config, |prefs| Ok(DebugDumpGenerator::new(prefs)));
 }
 
 #[derive(Debug)]
