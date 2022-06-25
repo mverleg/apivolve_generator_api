@@ -3,6 +3,7 @@ use ::std::path::PathBuf;
 pub use ::semver::Version;
 use ::serde::Deserialize;
 use ::serde::Serialize;
+use ::smallvec::SmallVec;
 
 use crate::gen1::data::Party;
 
@@ -13,38 +14,44 @@ pub struct GenerationPreferences {
     pub output_dir: PathBuf,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub extra_args: Vec<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub for_party: Option<Party>,
+    pub requested_parties: SmallVec<[Party; 3]>,
 }
 
-#[test]
-fn serialize() {
-    let json = serde_json::to_string(&GenerationPreferences {
-        apivolve_version: Version::new(1, 2, 4),
-        output_dir: PathBuf::from("/tmp"),
-        extra_args: vec!["--strict".to_string()],
-        for_party: None,
-    })
-    .unwrap();
-    assert_eq!(
-        json,
-        "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}"
-    );
-}
+#[cfg(test)]
+mod tests {
+    use ::smallvec::smallvec;
 
-#[test]
-fn deserialize() {
-    let config: GenerationPreferences = serde_json::from_str(
-        "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}",
-    )
-    .unwrap();
-    assert_eq!(
-        config,
-        GenerationPreferences {
+    use super::*;
+
+    #[test]
+    fn serialize() {
+        let json = serde_json::to_string(&GenerationPreferences {
             apivolve_version: Version::new(1, 2, 4),
             output_dir: PathBuf::from("/tmp"),
             extra_args: vec!["--strict".to_string()],
-            for_party: None,
-        }
-    )
+            requested_parties: smallvec![],
+        })
+            .unwrap();
+        assert_eq!(
+            json,
+            "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}"
+        );
+    }
+
+    #[test]
+    fn deserialize() {
+        let config: GenerationPreferences = serde_json::from_str(
+            "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}",
+        )
+            .unwrap();
+        assert_eq!(
+            config,
+            GenerationPreferences {
+                apivolve_version: Version::new(1, 2, 4),
+                output_dir: PathBuf::from("/tmp"),
+                extra_args: vec!["--strict".to_string()],
+                requested_parties: smallvec![],
+            }
+        )
+    }
 }

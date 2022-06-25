@@ -11,7 +11,7 @@ use crate::gen1::data::Party;
 #[serde(deny_unknown_fields)]
 pub struct EvolutionPreferences {
     pub features: GenFeatures,
-    pub parties: SmallVec<[Party; 3]>,
+    pub generate_parties: SmallVec<[Party; 3]>,
 }
 
 #[cfg(test)]
@@ -36,7 +36,7 @@ mod tests {
         ];
         let json = serde_json::to_string(&EvolutionPreferences {
             features: GenFeatures::new(features),
-            parties: smallvec![Party::new(Identifier::new("server"))]
+            generate_parties: smallvec![Party::new(Identifier::new("server"))]
         })
             .unwrap();
         assert_eq!(
@@ -56,7 +56,7 @@ mod tests {
             config,
             EvolutionPreferences {
                 features: GenFeatures::new(smallvec![GenFeature::Parser, GenFeature::Validator,]),
-                parties: smallvec![Party::new(Identifier::new("server"))]
+                generate_parties: smallvec![Party::new(Identifier::new("server"))]
             }
         )
     }

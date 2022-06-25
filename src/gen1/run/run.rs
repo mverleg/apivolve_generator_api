@@ -1,5 +1,6 @@
 use ::futures::executor::block_on;
 use ::semver::Version;
+use smallvec::smallvec;
 
 use crate::gen1::{AcceptsConfig, GenerationPreferences};
 use crate::gen1::run::gen_trait::{Generator, GenResult};
@@ -33,6 +34,6 @@ fn read_gen_preferences() -> GenerationPreferences {
         apivolve_version: Version::new(0, 0, 1),
         output_dir: Default::default(),
         extra_args: vec!["--features=documentation,examples,parser,validator".to_owned()],
-        for_party: None,
+        requested_parties: smallvec![],
     }
 }

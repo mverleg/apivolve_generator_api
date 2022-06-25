@@ -11,9 +11,9 @@ fn main() {
     assert!(args().skip(1).next().is_none(), "no arguments expected");
     let config = gen::AcceptsConfig {
         apivolve_version: gen::Version::new(0, 1, 0),
-        features: gen::GenFeatures::all(),
         encoding: gen::GenerateInputFormat::Json,
     };
+    //TODO @mark
     gen::run_generator(config, |prefs| Ok(DebugDumpGenerator::new(prefs)));
 }
 
