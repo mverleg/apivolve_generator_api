@@ -1,7 +1,9 @@
-
+use crate::gen1::data::{
+    BoolType, BytesType, EmptyType, HeterogeneousCollectionType, HomogeneousCollectionType,
+    IntType, RealType, RecordType, TextType, UnionType,
+};
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::data::{BoolType, BytesType, EmptyType, HeterogeneousCollectionType, HomogeneousCollectionType, IntType, RealType, RecordType, TextType, UnionType};
 
 pub type TypId = u64;
 
@@ -34,4 +36,3 @@ pub enum TypeDeclaration {
 pub struct DeclarationRef {
     id: TypId,
 }
-

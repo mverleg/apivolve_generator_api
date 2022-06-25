@@ -12,7 +12,11 @@ pub trait Generator {
     async fn generate_pending(&mut self, evolution: VersionEvolution) -> GenResult;
 
     /// Will be called for each version, from newest to oldest, after `generate_pending`.
-    async fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> GenResult;
+    async fn generate_version(
+        &mut self,
+        version: Version,
+        evolution: VersionEvolution,
+    ) -> GenResult;
 
     /// Will be called exactly once at the end if all prior steps were successful.
     async fn finalize(self) -> GenResult;

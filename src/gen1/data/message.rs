@@ -1,8 +1,8 @@
 use ::std::fmt;
 
+use crate::gen1::data::DeclarationRef;
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::data::DeclarationRef;
 
 use crate::util::Identifier;
 use crate::util::Range;
@@ -15,9 +15,7 @@ pub struct Party {
 
 impl Party {
     pub fn new(name: Identifier) -> Self {
-        Party {
-            name,
-        }
+        Party { name }
     }
 }
 
@@ -36,10 +34,7 @@ pub struct ResponseChoice {
 
 impl ResponseChoice {
     pub fn new(choices: Vec<Message>, count: Range) -> Self {
-        ResponseChoice {
-            choices,
-            count,
-        }
+        ResponseChoice { choices, count }
     }
 
     pub fn choices(&self) -> &[Message] {
@@ -64,7 +59,13 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(name: Identifier, sender: Party, recipient: Party, content: DeclarationRef, response: ResponseChoice) -> Self {
+    pub fn new(
+        name: Identifier,
+        sender: Party,
+        recipient: Party,
+        content: DeclarationRef,
+        response: ResponseChoice,
+    ) -> Self {
         Message {
             name,
             sender,

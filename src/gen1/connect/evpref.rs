@@ -19,7 +19,6 @@ mod tests {
     pub use ::semver::Version;
     use ::smallvec::smallvec;
 
-    use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeature;
     use crate::gen1::connect::layout::GenFeatures;
     use crate::Identifier;
@@ -36,9 +35,9 @@ mod tests {
         ];
         let json = serde_json::to_string(&EvolutionPreferences {
             features: GenFeatures::new(features),
-            generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())]
+            generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())],
         })
-            .unwrap();
+        .unwrap();
         assert_eq!(
             json,
             r#"{"apivolve_version":"1.2.4","features":{"features":["documentation","parser","validator"]},"encoding":"json"}"#
@@ -51,7 +50,7 @@ mod tests {
             r#"{"apivolve_version":"1.2.4","features":{"features":[
             "parser","validator"]},"encoding":"json"}"#,
         )
-            .unwrap();
+        .unwrap();
         assert_eq!(
             config,
             EvolutionPreferences {

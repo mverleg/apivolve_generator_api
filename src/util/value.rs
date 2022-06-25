@@ -45,12 +45,9 @@ pub struct Range {
 impl Range {
     pub fn try_new(min: u32, max: u32) -> Option<Self> {
         if min > max {
-            return None
+            return None;
         }
-        Some(Range {
-            min,
-            max
-        })
+        Some(Range { min, max })
     }
 
     pub fn new(min: u32, max: u32) -> Self {

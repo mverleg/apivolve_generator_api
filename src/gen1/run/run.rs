@@ -2,8 +2,8 @@ use ::futures::executor::block_on;
 use ::semver::Version;
 use smallvec::smallvec;
 
+use crate::gen1::run::gen_trait::{GenResult, Generator};
 use crate::gen1::{AcceptsConfig, GenerationPreferences};
-use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(

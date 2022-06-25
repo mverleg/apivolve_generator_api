@@ -16,7 +16,8 @@ pub struct AcceptsConfig {
 mod tests {
     pub use ::semver::Version;
     use ::smallvec::smallvec;
-    use smallvec::SmallVec;
+
+    use crate::gen1::connect::evpref::EvolutionPreferences;
 
     use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeature;
@@ -26,15 +27,20 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let features = smallvec![
+        let _json = serde_json::to_string(&AcceptsConfig {
+            apivolve_version: Version::new(1, 2, 4),
+            encoding: GenerateInputFormat::Json,
+        })
+        .unwrap();
+        let features = GenFeatures::new(smallvec![
             GenFeature::Parser,
             GenFeature::Parser,
             GenFeature::Validator,
             GenFeature::Documentation,
-        ];
-        let json = serde_json::to_string(&AcceptsConfig {
-            apivolve_version: Version::new(1, 2, 4),
-            encoding: GenerateInputFormat::Json,
+        ]);
+        let json = serde_json::to_string(&EvolutionPreferences {
+            features,
+            generate_parties: smallvec![], //TODO @mark: all
         })
         .unwrap();
         assert_eq!(

@@ -1,4 +1,3 @@
-
 use ::serde::Deserialize;
 use ::serde::Serialize;
 
@@ -39,7 +38,7 @@ impl RealType {
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Signed {
     Signed,
-    Unsigned
+    Unsigned,
 }
 
 impl Signed {

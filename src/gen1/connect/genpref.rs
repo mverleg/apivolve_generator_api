@@ -31,7 +31,7 @@ mod tests {
             extra_args: vec!["--strict".to_string()],
             requested_parties: smallvec![],
         })
-            .unwrap();
+        .unwrap();
         assert_eq!(
             json,
             "{\"apivolve_version\":\"1.2.4\",\"output_dir\":\"/tmp\",\"extra_args\":[\"--strict\"]}"

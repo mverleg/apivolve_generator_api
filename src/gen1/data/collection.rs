@@ -1,7 +1,6 @@
-
+use crate::gen1::data::Typ;
 use ::serde::Deserialize;
 use ::serde::Serialize;
-use crate::gen1::data::Typ;
 
 //TODO @mark: are maps needed? how to deal with static vs dynamic type of keys and values? 4 combis?
 

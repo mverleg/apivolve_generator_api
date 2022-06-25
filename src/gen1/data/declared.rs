@@ -58,4 +58,3 @@ impl NamedType {
         NamedType { name, typ }
     }
 }
-

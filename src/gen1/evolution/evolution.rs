@@ -20,23 +20,16 @@ pub struct VersionEvolution {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum ChangeStatus {
-    Unchanged {
-        same_as: Version,
-    },
+    Unchanged { same_as: Version },
     New,
-    Changed {
-        previous: Version,
-    },
+    Changed { previous: Version },
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum MessageOperation {
     /// This message is the same as in the given later version.
-    Unchanged {
-        same_as: Version,
-        typ: Message,
-    },
+    Unchanged { same_as: Version, typ: Message },
     /// This message is new or changed, but will be converted to a newer
     /// version after parsing, it won't be handled by user code.
     Convert {
@@ -47,9 +40,7 @@ pub enum MessageOperation {
     /// This object is new or changed, and will be handled by user code,
     /// either because it is the latest version, or because there was a
     /// backwards-incompatible change.
-    Implement {
-        typ: Message,
-    },
+    Implement { typ: Message },
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
