@@ -11,7 +11,9 @@ use crate::gen1::data::Party;
 pub struct GenerationPreferences {
     pub apivolve_version: Version,
     pub output_dir: PathBuf,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     pub extra_args: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub for_party: Option<Party>,
 }
 
