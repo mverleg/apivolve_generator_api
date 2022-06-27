@@ -1,8 +1,8 @@
 pub use ::semver::Version;
 
-pub use self::connect::accepts::AcceptsConfig;
+pub use self::connect::acceptedformat::AcceptedFormat;
 pub use self::connect::format::GenerateInputFormat;
-pub use self::connect::genpref::GenerationPreferences;
+pub use self::connect::userpreferences::UserPreferences;
 pub use self::connect::layout::GenFeature;
 pub use self::connect::layout::GenFeatures;
 pub use self::evolution::VersionEvolution;

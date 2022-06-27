@@ -7,7 +7,7 @@ use crate::gen1::connect::format::GenerateInputFormat;
 /// Specifies which inputs the generator expects from Apivolve.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct AcceptsConfig {
+pub struct AcceptedFormat {
     pub apivolve_version: Version,
     pub encoding: GenerateInputFormat,
 }
@@ -17,7 +17,7 @@ mod tests {
     pub use ::semver::Version;
     use ::smallvec::smallvec;
 
-    use crate::gen1::connect::evpref::EvolutionPreferences;
+    use crate::gen1::connect::functionalityrequest::FunctionalityRequest;
 
     use crate::gen1::connect::format::GenerateInputFormat;
     use crate::gen1::connect::layout::GenFeature;
@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn serialize() {
-        let _json = serde_json::to_string(&AcceptsConfig {
+        let _json = serde_json::to_string(&AcceptedFormat {
             apivolve_version: Version::new(1, 2, 4),
             encoding: GenerateInputFormat::Json,
         })
@@ -38,7 +38,7 @@ mod tests {
             GenFeature::Validator,
             GenFeature::Documentation,
         ]);
-        let json = serde_json::to_string(&EvolutionPreferences {
+        let json = serde_json::to_string(&FunctionalityRequest {
             features,
             generate_parties: smallvec![], //TODO @mark: all
         })
@@ -51,14 +51,14 @@ mod tests {
 
     #[test]
     fn deserialize() {
-        let config: AcceptsConfig = serde_json::from_str(
+        let config: AcceptedFormat = serde_json::from_str(
             r#"{"apivolve_version":"1.2.4","features":{"features":[
             "parser","validator"]},"encoding":"json"}"#,
         )
         .unwrap();
         assert_eq!(
             config,
-            AcceptsConfig {
+            AcceptedFormat {
                 apivolve_version: Version::new(1, 2, 4),
                 encoding: GenerateInputFormat::Json,
             }

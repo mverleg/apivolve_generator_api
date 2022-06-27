@@ -9,7 +9,7 @@ fn main() {
     //TODO @mark: make features configurable
     env_logger::init();
     assert!(args().skip(1).next().is_none(), "no arguments expected");
-    let config = gen::AcceptsConfig {
+    let config = gen::AcceptedFormat {
         apivolve_version: gen::Version::new(0, 1, 0),
         encoding: gen::GenerateInputFormat::Json,
     };
@@ -19,11 +19,11 @@ fn main() {
 
 #[derive(Debug)]
 struct DebugDumpGenerator {
-    config: gen::GenerationPreferences,
+    config: gen::UserPreferences,
 }
 
 impl DebugDumpGenerator {
-    pub fn new(config: gen::GenerationPreferences) -> Self {
+    pub fn new(config: gen::UserPreferences) -> Self {
         DebugDumpGenerator {
             config
         }

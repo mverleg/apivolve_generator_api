@@ -9,7 +9,7 @@ use crate::gen1::data::Party;
 /// Specifies which inputs the generator expects from Apivolve.
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
-pub struct EvolutionPreferences {
+pub struct FunctionalityRequest {
     pub features: GenFeatures,
     pub generate_parties: SmallVec<[Party; 3]>,
 }
@@ -33,7 +33,7 @@ mod tests {
             GenFeature::Validator,
             GenFeature::Documentation,
         ];
-        let json = serde_json::to_string(&EvolutionPreferences {
+        let json = serde_json::to_string(&FunctionalityRequest {
             features: GenFeatures::new(features),
             generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())],
         })
@@ -46,14 +46,14 @@ mod tests {
 
     #[test]
     fn deserialize() {
-        let config: EvolutionPreferences = serde_json::from_str(
+        let config: FunctionalityRequest = serde_json::from_str(
             r#"{"apivolve_version":"1.2.4","features":{"features":[
             "parser","validator"]},"encoding":"json"}"#,
         )
         .unwrap();
         assert_eq!(
             config,
-            EvolutionPreferences {
+            FunctionalityRequest {
                 features: GenFeatures::new(smallvec![GenFeature::Parser, GenFeature::Validator,]),
                 generate_parties: smallvec![Party::new(Identifier::new("server").unwrap())]
             }

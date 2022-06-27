@@ -1,5 +1,5 @@
-pub mod accepts;
-pub mod evpref;
+pub mod acceptedformat;
+pub mod functionalityrequest;
 pub mod format;
-pub mod genpref;
+pub mod userpreferences;
 pub mod layout;
