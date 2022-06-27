@@ -2,14 +2,14 @@ use ::futures::executor::block_on;
 use ::semver::Version;
 use ::smallvec::smallvec;
 
-use crate::gen1::{AcceptedFormat, UserPreferences};
+use crate::gen1::{AcceptedFormat, ErrMsg, UserPreferences};
 use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<G: Generator>(
     _accepts_config: AcceptedFormat,
-    make_generator: impl FnOnce(UserPreferences) -> Result<G, String>,
-) -> GenResult {
+    make_generator: impl FnOnce(UserPreferences) -> Result<G, ErrMsg>,
+) -> Result<(), ErrMsg> {
     //TODO @mark: auth
     //TODO @mark: send `accepts_config`
     let generator_preferences: UserPreferences = read_gen_preferences();
@@ -18,12 +18,23 @@ pub fn run_generator<G: Generator>(
     block_on(generate_until_first_err(generator))
 }
 
-async fn generate_until_first_err(mut generator: impl Generator) -> GenResult {
+async fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg> {
+    let mut finished = false;
     if let Some(evolution) = None {
-        generator.generate_pending(evolution).await?;
+        match generator.generate_pending(evolution).await {
+            GenResult::Ok => {},
+            GenResult::FinishEarly => finished = true,
+            GenResult::Error(err) => return Err(err),
+        }
     }
-    while let Some((version, evolution)) = None {
-        generator.generate_version(version, evolution).await?;
+    if ! finished {
+        while let Some((version, evolution)) = None {
+            match generator.generate_version(version, evolution).await {
+                GenResult::Ok => {}
+                GenResult::FinishEarly => break,
+                GenResult::Error(err) => return Err(err),
+            }
+        }
     }
     generator.finalize().await?;
     Ok(())

@@ -1,10 +1,17 @@
+
 use ::async_trait::async_trait;
 use ::semver::Version;
 
 use crate::gen1::VersionEvolution;
 
 pub type ErrMsg = String;
-pub type GenResult = Result<(), ErrMsg>;
+
+#[derive(Debug, Clone)]
+pub enum GenResult {
+    Ok,
+    FinishEarly,
+    Error(ErrMsg),
+}
 
 #[async_trait]
 pub trait Generator {
@@ -19,5 +26,5 @@ pub trait Generator {
     ) -> GenResult;
 
     /// Will be called exactly once at the end if all prior steps were successful.
-    async fn finalize(self) -> GenResult;
+    async fn finalize(self) -> Result<(), ErrMsg>;
 }

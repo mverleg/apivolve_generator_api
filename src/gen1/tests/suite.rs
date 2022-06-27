@@ -88,7 +88,7 @@ impl Generator for NoopGenerator {
         Ok(())
     }
 
-    async fn finalize(self) -> GenResult {
+    async fn finalize(self) -> Result<(), ErrMsg> {
         Ok(())
     }
 }

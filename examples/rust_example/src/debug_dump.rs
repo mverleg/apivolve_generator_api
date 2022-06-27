@@ -40,7 +40,7 @@ impl gen::Generator for DebugDumpGenerator {
         unimplemented!();  //TODO @mark:
     }
 
-    async fn finalize(self) -> GenResult {
+    async fn finalize(self) -> Result<(), gen::ErrMsg> {
         unimplemented!();  //TODO @mark:
     }
 }
