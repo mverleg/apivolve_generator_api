@@ -20,12 +20,14 @@ fn main() {
 #[derive(Debug)]
 struct DebugDumpGenerator {
     config: gen::UserPreferences,
+    version_count: u32,
 }
 
 impl DebugDumpGenerator {
     pub fn new(config: gen::UserPreferences) -> Self {
         DebugDumpGenerator {
-            config
+            config,
+            version_count: 0,
         }
     }
 }
@@ -33,17 +35,29 @@ impl DebugDumpGenerator {
 #[async_trait]
 impl gen::Generator for DebugDumpGenerator {
     async fn generate_pending(&mut self, evolution: VersionEvolution) -> GenResult {
-        unimplemented!();  //TODO @mark:
+        let json = serde_json::to_string_pretty(&evolution).unwrap();
+        println!("{}", json);
+        self.version_count += 1;
+        GenResult::Ok
     }
 
     async fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> GenResult {
-        unimplemented!();  //TODO @mark:
+        println!("// version = {}", version);
+        let json = serde_json::to_string_pretty(&evolution).unwrap();
+        println!("{}", json);
+        self.version_count += 1;
+        GenResult::Ok
     }
 
     async fn finalize(self) -> Result<(), gen::ErrMsg> {
-        unimplemented!();  //TODO @mark:
+        if self.version_count > 0 {
+            println!("// printend {} versions", self.version_count);
+            Ok(())
+        } else {
+            Err("no versions found".to_owned())
+        }
     }
 }
 
-#[cfg(test)]
-testsuite_full!();
+// #[cfg(test)]
+// testsuite_full!();
