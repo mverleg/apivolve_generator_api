@@ -51,7 +51,7 @@ impl gen::Generator for DebugDumpGenerator {
 
     async fn finalize(self) -> Result<(), gen::ErrMsg> {
         if self.version_count > 0 {
-            println!("// printend {} versions", self.version_count);
+            println!("// printed {} versions", self.version_count);
             Ok(())
         } else {
             Err("no versions found".to_owned())
