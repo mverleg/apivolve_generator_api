@@ -1,7 +1,4 @@
 use ::apivolve_generator_api::gen1 as gen;
-use ::apivolve_generator_api::gen1::GenResult;
-use ::apivolve_generator_api::gen1::Version;
-use ::apivolve_generator_api::gen1::VersionEvolution;
 use ::std::env::args;
 
 fn main() {
@@ -16,17 +13,21 @@ fn main() {
     gen::run_generator();
 }
 
+/// This is the starting point for making a generator. It handles the exchanging of
+/// preferences and eventually builds the Generator. It must implement `GeneratorApi`.
 #[derive(Debug)]
 struct DebugDumpApi {}
 
 impl gen::GeneratorApi<DebugDumpGenerator, (), ()> for DebugDumpApi {
-    fn accepts(&mut self) -> Result<(AcceptedFormat, ()), String> {}
+    fn accepts(&mut self) -> Result<(gen::AcceptedFormat, ()), String> {}
 
-    fn features(&mut self, user_pref: UserPreferences, data: ()) -> Result<(FunctionalityRequest, ()), String> {}
+    fn features(&mut self, user_pref: gen::UserPreferences, data: ()) -> Result<(gen::FunctionalityRequest, ()), String> {}
 
-    fn make_generator(self, data: ()) -> Result<G, String> {}
+    fn make_generator(self, data: ()) -> Result<DebugDumpGenerator, String> {}
 }
 
+/// This does the actual code generation based on Apivolve evolutions. The object is
+/// created by `DebugDumpApi` and must implement `Generator`.
 #[derive(Debug)]
 struct DebugDumpGenerator {
     config: gen::UserPreferences,
@@ -43,19 +44,19 @@ impl DebugDumpGenerator {
 }
 
 impl gen::Generator for DebugDumpGenerator {
-    fn generate_pending(&mut self, evolution: VersionEvolution) -> GenResult {
+    fn generate_pending(&mut self, evolution: VersionEvolution) -> gen::GenResult {
         let json = serde_json::to_string_pretty(&evolution).unwrap();
         println!("{}", json);
         self.version_count += 1;
-        GenResult::Ok
+        gen::GenResult::Ok
     }
 
-    fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> GenResult {
+    fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> gen::GenResult {
         println!("// version = {}", version);
         let json = serde_json::to_string_pretty(&evolution).unwrap();
         println!("{}", json);
         self.version_count += 1;
-        GenResult::Ok
+        gen::GenResult::Ok
     }
 
     fn finalize(self) -> Result<(), gen::ErrMsg> {

@@ -10,3 +10,5 @@ pub trait GeneratorApi<G: Generator, T, U> {
 
     fn make_generator(self, data: U) -> Result<G, String>;
 }
+
+//TODO @mark: add a way to do warnings?
