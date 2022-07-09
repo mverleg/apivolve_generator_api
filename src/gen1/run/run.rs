@@ -1,19 +1,36 @@
+use ::log::error;
 use ::semver::Version;
 use ::smallvec::smallvec;
 
-use crate::gen1::{ErrMsg, GeneratorProtocol, UserPreferences};
+use crate::gen1::{AcceptedFormat, ErrMsg, FunctionalityRequest, GeneratorProtocol, UserPreferences};
 use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<T, U, G: Generator>(
-    gen_api: impl GeneratorProtocol<T, U, G>,
+    mut protocol: impl GeneratorProtocol<G, T, U>,
 ) -> Result<(), ErrMsg> {
-    //TODO @mark: auth
-    //TODO @mark: send `accepts_config`
-    let generator_preferences: UserPreferences = read_gen_preferences();
-    let generator: G = make_generator(generator_preferences)?;
-    //TODO @mark: use a better async runtime
-    generate_until_first_err(generator)
+    let (accepts, transfer1) = match protocol.accepts() {
+        Ok(res) => res,
+        Err(err) => {
+            error!("generator failed to send accepted format: {}", &err);
+            return Err(err)
+        },
+    };
+    let user_prefs = ();
+    let (features, transfer2) = match protocol.features(user_prefs, transfer1) {
+        Ok(res) => res,
+        Err(err) => {
+            error!("generator failed to send requested features: {}", &err);
+            return Err(err)
+        },
+    };
+    // gen_api.make_generator();
+    // //TODO @mark: send `accepts_config`
+    // let generator_preferences: UserPreferences = read_gen_preferences();
+    // let generator: G = make_generator(generator_preferences)?;
+    // //TODO @mark: use a better async runtime
+    // generate_until_first_err(generator)
+    unimplemented!()  //TODO @mark: TEMPORARY! REMOVE THIS!
 }
 
 fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg> {
