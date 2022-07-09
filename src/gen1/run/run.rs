@@ -1,4 +1,3 @@
-use ::futures::executor::block_on;
 use ::semver::Version;
 use ::smallvec::smallvec;
 
@@ -15,13 +14,13 @@ pub fn run_generator<G: Generator>(
     let generator_preferences: UserPreferences = read_gen_preferences();
     let generator: G = make_generator(generator_preferences)?;
     //TODO @mark: use a better async runtime
-    block_on(generate_until_first_err(generator))
+    generate_until_first_err(generator)
 }
 
-async fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg> {
+fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg> {
     let mut finished = false;
     if let Some(evolution) = None {
-        match generator.generate_pending(evolution).await {
+        match generator.generate_pending(evolution) {
             GenResult::Ok => {},
             GenResult::FinishEarly => finished = true,
             GenResult::Error(err) => return Err(err),
@@ -29,14 +28,14 @@ async fn generate_until_first_err(mut generator: impl Generator) -> Result<(), E
     }
     if ! finished {
         while let Some((version, evolution)) = None {
-            match generator.generate_version(version, evolution).await {
+            match generator.generate_version(version, evolution) {
                 GenResult::Ok => {}
                 GenResult::FinishEarly => break,
                 GenResult::Error(err) => return Err(err),
             }
         }
     }
-    generator.finalize().await?;
+    generator.finalize()?;
     Ok(())
 }
 

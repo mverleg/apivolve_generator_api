@@ -2,14 +2,15 @@ pub use ::semver::Version;
 
 pub use self::connect::acceptedformat::AcceptedFormat;
 pub use self::connect::format::GenerateInputFormat;
-pub use self::connect::userpreferences::UserPreferences;
 pub use self::connect::layout::GenFeature;
 pub use self::connect::layout::GenFeatures;
+pub use self::connect::userpreferences::UserPreferences;
 pub use self::evolution::VersionEvolution;
-pub use self::run::run_generator;
 pub use self::run::ErrMsg;
-pub use self::run::GenResult;
 pub use self::run::Generator;
+pub use self::run::GeneratorApi;
+pub use self::run::GenResult;
+pub use self::run::run_generator;
 
 mod connect;
 mod data;
