@@ -1,10 +1,11 @@
 pub use ::semver::Version;
 
-pub use self::connect::acceptedformat::AcceptedFormat;
-pub use self::connect::format::GenerateInputFormat;
-pub use self::connect::layout::GenFeature;
-pub use self::connect::layout::GenFeatures;
-pub use self::connect::userpreferences::UserPreferences;
+pub use self::connect::AcceptedFormat;
+pub use self::connect::FunctionalityRequest;
+pub use self::connect::GenerateInputFormat;
+pub use self::connect::GenFeature;
+pub use self::connect::GenFeatures;
+pub use self::connect::UserPreferences;
 pub use self::evolution::VersionEvolution;
 pub use self::run::ErrMsg;
 pub use self::run::Generator;

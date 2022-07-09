@@ -5,12 +5,8 @@ fn main() {
     //TODO @mark: make features configurable
     env_logger::init();
     assert!(args().skip(1).next().is_none(), "no arguments expected");
-    let config = gen::AcceptedFormat {
-        apivolve_version: gen::Version::new(0, 1, 0),
-        encoding: gen::GenerateInputFormat::Json,
-    };
     let api = DebugDumpApi::new();
-    gen::run_generator();
+    gen::run_generator(api);
 }
 
 /// This is the starting point for making a generator. It handles the exchanging of
@@ -18,12 +14,27 @@ fn main() {
 #[derive(Debug)]
 struct DebugDumpApi {}
 
-impl gen::GeneratorApi<DebugDumpGenerator, (), ()> for DebugDumpApi {
-    fn accepts(&mut self) -> Result<(gen::AcceptedFormat, ()), String> {}
+impl DebugDumpApi {
+    pub fn new() -> Self {
+        DebugDumpApi {}
+    }
+}
 
-    fn features(&mut self, user_pref: gen::UserPreferences, data: ()) -> Result<(gen::FunctionalityRequest, ()), String> {}
+impl gen::GeneratorApi<DebugDumpGenerator, (), gen::UserPreferences> for DebugDumpApi {
+    fn accepts(&mut self) -> Result<(gen::AcceptedFormat, ()), String> {
+        Ok(gen::AcceptedFormat {
+            apivolve_version: gen::Version::new(0, 1, 0),
+            encoding: gen::GenerateInputFormat::Json,
+        })
+    }
 
-    fn make_generator(self, data: ()) -> Result<DebugDumpGenerator, String> {}
+    fn features(&mut self, user_pref: gen::UserPreferences, data: ()) -> Result<(gen::FunctionalityRequest, gen::UserPreferences), String> {
+
+    }
+
+    fn make_generator(self, data: gen::UserPreferences) -> Result<DebugDumpGenerator, String> {
+
+    }
 }
 
 /// This does the actual code generation based on Apivolve evolutions. The object is
@@ -44,14 +55,14 @@ impl DebugDumpGenerator {
 }
 
 impl gen::Generator for DebugDumpGenerator {
-    fn generate_pending(&mut self, evolution: VersionEvolution) -> gen::GenResult {
+    fn generate_pending(&mut self, evolution: gen::VersionEvolution) -> gen::GenResult {
         let json = serde_json::to_string_pretty(&evolution).unwrap();
         println!("{}", json);
         self.version_count += 1;
         gen::GenResult::Ok
     }
 
-    fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> gen::GenResult {
+    fn generate_version(&mut self, version: gen::Version, evolution: gen::VersionEvolution) -> gen::GenResult {
         println!("// version = {}", version);
         let json = serde_json::to_string_pretty(&evolution).unwrap();
         println!("{}", json);
