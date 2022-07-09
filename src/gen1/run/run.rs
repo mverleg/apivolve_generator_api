@@ -1,12 +1,12 @@
 use ::semver::Version;
 use ::smallvec::smallvec;
 
-use crate::gen1::{ErrMsg, GeneratorApi, UserPreferences};
+use crate::gen1::{ErrMsg, GeneratorProtocol, UserPreferences};
 use crate::gen1::run::gen_trait::{Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<T, U, G: Generator>(
-    gen_api: impl GeneratorApi<T, U, G>,
+    gen_api: impl GeneratorProtocol<T, U, G>,
 ) -> Result<(), ErrMsg> {
     //TODO @mark: auth
     //TODO @mark: send `accepts_config`

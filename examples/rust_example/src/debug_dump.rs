@@ -5,22 +5,22 @@ fn main() {
     //TODO @mark: make features configurable
     env_logger::init();
     assert!(args().skip(1).next().is_none(), "no arguments expected");
-    let api = DebugDumpApi::new();
+    let api = DebugDumpProtocol::new();
     gen::run_generator(api);
 }
 
 /// This is the starting point for making a generator. It handles the exchanging of
 /// preferences and eventually builds the Generator. It must implement `GeneratorApi`.
 #[derive(Debug)]
-struct DebugDumpApi {}
+struct DebugDumpProtocol {}
 
-impl DebugDumpApi {
+impl DebugDumpProtocol {
     pub fn new() -> Self {
-        DebugDumpApi {}
+        DebugDumpProtocol {}
     }
 }
 
-impl gen::GeneratorApi<DebugDumpGenerator, (), gen::UserPreferences> for DebugDumpApi {
+impl gen::GeneratorProtocol<DebugDumpGenerator, (), gen::UserPreferences> for DebugDumpProtocol {
     fn accepts(&mut self) -> Result<(gen::AcceptedFormat, ()), String> {
         Ok(gen::AcceptedFormat {
             apivolve_version: gen::Version::new(0, 1, 0),

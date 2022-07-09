@@ -9,7 +9,7 @@ pub use self::connect::UserPreferences;
 pub use self::evolution::VersionEvolution;
 pub use self::run::ErrMsg;
 pub use self::run::Generator;
-pub use self::run::GeneratorApi;
+pub use self::run::GeneratorProtocol;
 pub use self::run::GenResult;
 pub use self::run::run_generator;
 
