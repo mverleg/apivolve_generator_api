@@ -6,8 +6,7 @@ use ::log::error;
 use ::semver::Version;
 use ::smallvec::smallvec;
 
-use crate::gen1::{AcceptedFormat, ErrMsg, FunctionalityRequest, GeneratorProtocol, UserPreferences};
-use crate::gen1::run::gen_trait::{Generator, GenResult};
+use crate::gen1::{ErrMsg, GeneratorProtocol, UserPreferences, Generator, GenResult};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<T, U, G: Generator>(
@@ -20,6 +19,12 @@ pub fn run_generator<T, U, G: Generator>(
     let accepts_json = serde_json::to_string(&accepts)
         .expect("could not convert AcceptedFormat to json");
 
+    let user_prefs = UserPreferences {  //TODO @mark:
+        apivolve_version: Version::new(1, 0, 0),
+        output_dir: Default::default(),
+        extra_args: vec![],
+        requested_parties: Default::default()
+    };
     let (features, transfer2) = match protocol.features(user_prefs, transfer1) {
         Ok(res) => res,
         Err(err) => {
@@ -38,11 +43,20 @@ pub fn run_generator<T, U, G: Generator>(
 
 fn accept_single_connection() -> Result<(), ErrMsg> {
     let address = "127.0.0.1:47400";
+    //TODO @mark: rewrite from server to client (server in drive.rs)
     let listener = TcpListener::bind(address)
         .map_err(|err| format!("failed to listen for tcp connection on {}, err {}", address, err))?;
-    let mut worker;
-    if let Some(connection) = listener.incoming().next() {
-
+    let mut stream;
+    while let Some(connection) = listener.incoming().next() {
+        match connection {
+            Ok(s) => {
+                stream = s;
+                break;
+            }
+            Err(err) => {
+                error!("failed to accept the first connection on {}, err {}", address, err);
+            }
+        }
     }
     thread::spawn(|| reject_extra_connections(listener));
     for connection in listener.incoming() {

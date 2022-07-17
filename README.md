@@ -19,7 +19,7 @@ Version 1 is currently the latest/only version.
 
 Communication happens over a localhost TCP connection.
 
-* Apivolve runs the generator executable (without arguments).
+* Apivolve runs the generator executable, with tcp address as argument.
 * The generator sends the configuration it expects to use ([`AcceptedFormat`](./src/gen1/connect/acceptedformat.rs)).
 * Apivolve sends the generator options, such as output directory and arguments ([`UserPreferences`](./src/gen1/connect/userpreferences.rs)).
 * The generator sends the features and parties it wants, with ([`FunctionalityRequest`](./src/gen1/connect/functionalityrequest.rs)).
