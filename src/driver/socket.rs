@@ -6,15 +6,23 @@ use ::log::error;
 
 use crate::gen1::ErrMsg;
 
+#[allow(unused)] //TODO @mark:
 fn accept_single_connection() -> Result<(), ErrMsg> {
     let address = "127.0.0.1:47400";
-    let listener = TcpListener::bind(address)
-        .map_err(|err| format!("failed to listen for tcp connection on {}, err {}", address, err))?;
+    let listener = TcpListener::bind(address).map_err(|err| {
+        format!(
+            "failed to listen for tcp connection on {}, err {}",
+            address, err
+        )
+    })?;
     // let mut worker;
     if let Some(connection) = listener.incoming().next() {
         match connection {
-            Ok(connection) => {}
-            Err(err) => panic!("failed to accept the first connection on {}, err {}", address, err),
+            Ok(_connection) => {}
+            Err(err) => panic!(
+                "failed to accept the first connection on {}, err {}",
+                address, err
+            ),
         }
     }
     thread::spawn(|| reject_extra_connections(listener));
@@ -26,6 +34,7 @@ fn accept_single_connection() -> Result<(), ErrMsg> {
     Ok(())
 }
 
+#[allow(unused)] //TODO @mark:
 fn reject_extra_connections(listener: TcpListener) {
     for extra_connection in listener.incoming() {
         debug!("unexpected connection: {:?}", extra_connection);

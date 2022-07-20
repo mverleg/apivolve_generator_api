@@ -11,10 +11,12 @@ use ::log::debug;
 
 #[derive(Debug)]
 pub struct ReadyGuard {
+    #[allow(unused)] //TODO @mark:
     is_ready: Arc<AtomicBool>,
 }
 
 impl ReadyGuard {
+    #[allow(unused)] //TODO @mark:
     pub fn ready(&self) {
         self.is_ready.store(true, Ordering::Release);
     }
@@ -30,6 +32,7 @@ impl ReadyGuard {
 // }
 
 /// Run an action in another thread if the ReadyGuard has not dropped after the timeout.
+#[allow(unused)] //TODO @mark:
 pub fn run_if_not_ready_after(
     timeout: Duration,
     timeout_action: impl FnOnce() + Send + 'static,

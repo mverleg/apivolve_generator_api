@@ -1,31 +1,31 @@
-use ::std::net::TcpListener;
-use ::std::thread;
+//TODO @mark: put on hold in the middle of dev; does not work at all
 
-use ::log::debug;
 use ::log::error;
 use ::semver::Version;
 use ::smallvec::smallvec;
 
-use crate::gen1::{ErrMsg, GeneratorProtocol, UserPreferences, Generator, GenResult};
+use crate::gen1::{ErrMsg, GenResult, Generator, GeneratorProtocol, UserPreferences};
 
 /// Run the generator, handling the communication with Apivolve.
 pub fn run_generator<T, U, G: Generator>(
     mut protocol: impl GeneratorProtocol<G, T, U>,
 ) -> Result<(), ErrMsg> {
-    accept_single_connection();
+    //accept_single_connection().unwrap();
     //TODO @mark: timeout
-    let (accepts, transfer1) = protocol.accepts()
+    let (accepts, transfer1) = protocol
+        .accepts()
         .map_err(|err| format!("generator failed to specify the accepted format: {}", &err))?;
-    let accepts_json = serde_json::to_string(&accepts)
-        .expect("could not convert AcceptedFormat to json");
+    let _accepts_json =
+        serde_json::to_string(&accepts).expect("could not convert AcceptedFormat to json");
 
-    let user_prefs = UserPreferences {  //TODO @mark:
+    let user_prefs = UserPreferences {
+        //TODO @mark:
         apivolve_version: Version::new(1, 0, 0),
         output_dir: Default::default(),
         extra_args: vec![],
-        requested_parties: Default::default()
+        requested_parties: Default::default(),
     };
-    let (features, transfer2) = match protocol.features(user_prefs, transfer1) {
+    let (_features, _transfer2) = match protocol.features(user_prefs, transfer1) {
         Ok(res) => res,
         Err(err) => {
             error!("generator failed to send requested features: {}", &err);
@@ -38,42 +38,10 @@ pub fn run_generator<T, U, G: Generator>(
     // let generator: G = make_generator(generator_preferences)?;
     // //TODO @mark: use a better async runtime
     // generate_until_first_err(generator)
-    unimplemented!()  //TODO @mark: TEMPORARY! REMOVE THIS!
+    unimplemented!() //TODO @mark: TEMPORARY! REMOVE THIS!
 }
 
-fn accept_single_connection() -> Result<(), ErrMsg> {
-    let address = "127.0.0.1:47400";
-    //TODO @mark: rewrite from server to client (server in socket)
-    // let listener = TcpListener::bind(address)
-    //     .map_err(|err| format!("failed to listen for tcp connection on {}, err {}", address, err))?;
-    // let mut stream;
-    // while let Some(connection) = listener.incoming().next() {
-    //     match connection {
-    //         Ok(s) => {
-    //             stream = s;
-    //             break;
-    //         }
-    //         Err(err) => {
-    //             error!("failed to accept the first connection on {}, err {}", address, err);
-    //         }
-    //     }
-    // }
-    // thread::spawn(|| reject_extra_connections(listener));
-    // for connection in listener.incoming() {
-    //     let stream = connection.map_err(|err| format!("failed to accept the forst connection on {}, err {}", address, err))?;
-    //     worker = thread::spawn(move || stream);
-    // }
-    // worker.join().expect("generator thread failed to join");
-    Ok(())
-}
-
-fn reject_extra_connections(listener: TcpListener) {
-    for extra_connection in listener.incoming() {
-        debug!("unexpected connection: {:?}", extra_connection);
-        error!("received more than one connection! this should not happen, it will be ignored");
-    }
-}
-
+#[allow(unused)] //TODO @mark:
 fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg> {
     let mut finished = false;
     if let Some(evolution) = None {
@@ -96,6 +64,7 @@ fn generate_until_first_err(mut generator: impl Generator) -> Result<(), ErrMsg>
     Ok(())
 }
 
+#[allow(unused)] //TODO @mark:
 fn read_gen_preferences() -> UserPreferences {
     UserPreferences {
         apivolve_version: Version::new(0, 0, 1),

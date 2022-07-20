@@ -1,5 +1,5 @@
-mod protocol;
 mod gen_trait;
+mod protocol;
 mod run;
 
 pub use self::gen_trait::ErrMsg;

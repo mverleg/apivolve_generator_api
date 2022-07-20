@@ -70,4 +70,8 @@ impl Range {
     pub fn len(&self) -> u32 {
         self.max - self.min + 1
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.max <= self.min
+    }
 }

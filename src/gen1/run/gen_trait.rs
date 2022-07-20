@@ -16,11 +16,7 @@ pub trait Generator {
     fn generate_pending(&mut self, evolution: VersionEvolution) -> GenResult;
 
     /// Will be called for each version, from newest to oldest, after `generate_pending`.
-    fn generate_version(
-        &mut self,
-        version: Version,
-        evolution: VersionEvolution,
-    ) -> GenResult;
+    fn generate_version(&mut self, version: Version, evolution: VersionEvolution) -> GenResult;
 
     /// Will be called exactly once at the end if all prior steps were successful.
     fn finalize(self) -> Result<(), ErrMsg>;
