@@ -10,7 +10,7 @@ fn accept_single_connection() -> Result<(), ErrMsg> {
     let address = "127.0.0.1:47400";
     let listener = TcpListener::bind(address)
         .map_err(|err| format!("failed to listen for tcp connection on {}, err {}", address, err))?;
-    let mut worker;
+    // let mut worker;
     if let Some(connection) = listener.incoming().next() {
         match connection {
             Ok(connection) => {}
@@ -18,11 +18,11 @@ fn accept_single_connection() -> Result<(), ErrMsg> {
         }
     }
     thread::spawn(|| reject_extra_connections(listener));
-    for connection in listener.incoming() {
-        let stream = connection.map_err(|err| format!("failed to accept the first connection on {}, err {}", address, err))?;
-        worker = thread::spawn(move || stream);
-    }
-    worker.join().expect("generator thread failed to join");
+    // for connection in listener.incoming() {
+    //     let stream = connection.map_err(|err| format!("failed to accept the first connection on {}, err {}", address, err))?;
+    //     worker = thread::spawn(move || stream);
+    // }
+    // worker.join().expect("generator thread failed to join");
     Ok(())
 }
 

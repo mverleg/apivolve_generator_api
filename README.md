@@ -19,6 +19,8 @@ Version 1 is currently the latest/only version.
 
 Communication happens over a localhost TCP connection.
 
+EDIT: support embedded (Rust) only for now, and then bootstrap the protocol with Apivolve itself
+
 * Apivolve runs the generator executable, with tcp address as argument.
 * The generator sends the configuration it expects to use ([`AcceptedFormat`](./src/gen1/connect/acceptedformat.rs)).
 * Apivolve sends the generator options, such as output directory and arguments ([`UserPreferences`](./src/gen1/connect/userpreferences.rs)).
