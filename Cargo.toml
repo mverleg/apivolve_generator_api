@@ -1,6 +1,6 @@
 [package]
 name = "apivolve_generator_api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Api for creating generators for Apivolve, an API evolution tool that helps keep your APIs backwards compatible yet clean."
 edition = "2021"
 publish = true
@@ -12,12 +12,12 @@ name = "apivolve_generator_api"
 path = "src/lib.rs"
 
 [dependencies]
-serde = { version = "1.0.138", features = ["derive"] }
-serde_json = "1.0.82"
-semver = { version = "1.0.12", features = ["serde"] }
+serde = { version = "1.0.160", features = ["derive"] }
+serde_json = "1.0.96"
+semver = { version = "1.0.17", features = ["serde"] }
 log = { version = "0.4.17", features = ["release_max_level_info"] }
-futures = "0.3.21"
-async-trait = "0.1.56"
-smallvec = { version = "1.9.0", features = ["serde"] }
+futures = "0.3.28"
+async-trait = "0.1.68"
+smallvec = { version = "1.10.0", features = ["serde"] }
 tempdir = "0.3.7"
 #TODO @mark: found a cool feature but is this worth it? ^
